@@ -1,0 +1,6 @@
+
+{% for session in session_list %}
+
+<p><a href="{{ session.get_absolute_url }}">{{ session }}</a></p>
+
+{% endfor %}

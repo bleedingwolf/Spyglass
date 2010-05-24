@@ -1,7 +1,7 @@
 
 from django.contrib import admin
 
-from spyglass.models import HttpSession
+from spyglass.models import HttpSession, HttpRedirect
 
 
 class HttpSessionAdmin(admin.ModelAdmin):
@@ -9,3 +9,4 @@ class HttpSessionAdmin(admin.ModelAdmin):
 
 
 admin.site.register(HttpSession, HttpSessionAdmin)
+admin.site.register(HttpRedirect)

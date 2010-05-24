@@ -16,7 +16,7 @@ class HttpSessionTest(TestCase):
     def test_absolute_url(self):
     
         s = HttpSession(id=543)
-        self.failUnlessEqual(s.get_absolute_url(), '/session/543')
+        self.failUnlessEqual(s.get_absolute_url(), '/sessions/543')
         
         
     def test_raw_request_with_path(self):
@@ -28,7 +28,7 @@ class HttpSessionTest(TestCase):
    
     def test_raw_request_for_index(self):
         
-        s = HttpSession(http_method='GET', http_url='http://www.carfax.com/')
+        s = HttpSession(http_method='GET', http_url='http://www.carfax.com')
         expected_request = 'GET / HTTP/1.1\r\nHost: www.carfax.com\r\nAccept: */*\r\n\r\n'
         self.failUnlessEqual(s.get_raw_request(), expected_request)
     
@@ -64,14 +64,14 @@ Vary: *
         pretty = formatter.format(headers)
         
         expected = """<span class="status">HTTP/1.1 200 OK</span>
-<span class="header">Server:</span><span class="header-value"> nginx</span>
-<span class="header">Date:</span><span class="header-value"> Wed, 19 May 2010 23:26:12 GMT</span>
-<span class="header">Content-Type:</span><span class="header-value"> application/json; charset=utf-8</span>
-<span class="header">Connection:</span><span class="header-value"> keep-alive</span>
-<span class="header">Cache-Control:</span><span class="header-value"> public, max-age=108</span>
-<span class="header">Expires:</span><span class="header-value"> Wed, 19 May 2010 23:28:21 GMT</span>
-<span class="header">Last-Modified:</span><span class="header-value"> Wed, 19 May 2010 23:25:21 GMT</span>
-<span class="header">Vary:</span><span class="header-value"> *</span>""".replace('\n', '\r\n')
+<span class="ss">Server:</span><span class="s"> nginx</span>
+<span class="ss">Date:</span><span class="s"> Wed, 19 May 2010 23:26:12 GMT</span>
+<span class="ss">Content-Type:</span><span class="s"> application/json; charset=utf-8</span>
+<span class="ss">Connection:</span><span class="s"> keep-alive</span>
+<span class="ss">Cache-Control:</span><span class="s"> public, max-age=108</span>
+<span class="ss">Expires:</span><span class="s"> Wed, 19 May 2010 23:28:21 GMT</span>
+<span class="ss">Last-Modified:</span><span class="s"> Wed, 19 May 2010 23:25:21 GMT</span>
+<span class="ss">Vary:</span><span class="s"> *</span>""".replace('\n', '\r\n')
 
         self.failUnlessEqual(pretty, expected)
         

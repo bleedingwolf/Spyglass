@@ -1,13 +1,27 @@
 
-def run_session(session):
+import socket
+import datetime
+from urlparse import urlparse
+
+from spyglass.models import format_request, HttpRedirect
+
+def run_session(session, url=None, follow_redirects=False):
 
     if session.needs_to_send_request():
     
-        hostname = session.get_hostname()
-        print "Making request to %s..." % hostname
+        if not url:
+            url = session.http_url
+        
+        parsed_url = urlparse(url)
+        hostname = parsed_url.hostname
+        path = parsed_url.path or '/'
+        
+        raw_request = format_request(session.http_method, hostname, path)
+        
+        print "[INFO] Making request to %s..." % hostname
         sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         sock.connect((hostname, 80))
-        sock.sendall(session.get_raw_request())
+        sock.sendall(raw_request)
         
         receiving_headers = True
         raw_response = ''
@@ -16,6 +30,10 @@ def run_session(session):
         status = f.readline()
         raw_response += status
         
+        print "[INFO] Status: %s" % status.strip()
+        
+        response_code = int(status.split(' ')[1])
+
         headers = {}
         while receiving_headers:
             raw_header = f.readline()
@@ -25,16 +43,29 @@ def run_session(session):
                 receiving_headers = False
                 break
             
-            header, value = raw_header.split(':', 1)
+            try:
+                header, value = raw_header.split(':', 1)
+            except ValueError:
+                receiving_headers = False
+                break
             header = header.strip().lower()
             value = value.strip()
             headers[header] = value
+             
+        if 300 <= response_code <= 399 and follow_redirects:
+            location = headers.get('location', None)
+            if location:
+                print "[TODO] log redirect"
+                HttpRedirect(url=location, session=session).save()
+                
+                print "[INFO] Redirected to %s" % location
+                f.close()
+                sock.close()
+                run_session(session, location, follow_redirects)
+                return
         
         transfer_coding = headers.get('transfer-encoding', None)
         content_length = headers.get('content-length', None)
-        
-        print "Transfer coding: %s" % transfer_coding
-        print "Content length: %s" % content_length
         
         if transfer_coding == 'chunked':
             while True:
@@ -62,7 +93,7 @@ def run_session(session):
         f.close()
         sock.close()
         
-        print "Received %d bytes from host." % len(raw_response)
+        print "[INFO] Received %d bytes from host." % len(raw_response)
         
         session.http_response = raw_response
         session.time_completed = datetime.datetime.now()

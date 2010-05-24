@@ -1,7 +1,10 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+<head>
 
 <style type="text/css">
 
-html, body, div, table, tr, td, pre, code, p, h1, h2, h3, h4, h5, h6, abbr {
+html, body, div, table, tr, td, pre, code, p, h1, h2, h3, h4, h5, h6, abbr, label {
     margin: 0;
     padding: 0;
     border: none;
@@ -18,11 +21,15 @@ body {
     width: 918px;
     background: #f8f8ff;
     border: 1px solid #ccc;
-    overflow: auto;
     margin: 20px auto;
 }
 
 .code-listing {
+    overflow: auto;
+    width: 918px;
+}
+
+.code-listing table {
     border-spacing: 0px;
 }
 
@@ -49,6 +56,7 @@ body {
     color: #aaa;
     text-align: right;
     vertical-align: top;
+    width: 1px;
 }
 
 .code-listing .data {
@@ -59,25 +67,27 @@ body {
     font-family: 'Bitstream Vera Sans Mono', Courier, monospace;
 }
 
-.code-listing .data .status {
-    color: #900;
-}
-
-.code-listing .data .header {
-    color: #458;
-}
-
-.code-listing .data .header-value {
-    color: #d14;
+.followed-redirect {
+    font-family: 'Bitstream Vera Sans Mono', Courier, monospace;
+    width: 894px;
+    background: #f8f8ff;
+    border: 1px solid #ccc;
+    margin: 20px auto;
+    padding: 6px 12px 4px 12px;
 }
 
 #create-session-header-form {
     width: 918px;
     margin: 20px auto;
+    font-family: sans-serif;
 }
 
     #create-session-header-form .url-input {
-        width: 760px;
+        width: 630px;
+    }
+    
+    #create-session-header-form label {
+        margin-right: 10px;
     }
 
 
@@ -143,38 +153,56 @@ body {
 .vi { color: #19177C } /* Name.Variable.Instance */
 .il { color: #666666 } /* Literal.Number.Integer.Long */
 
-
-
 </style>
+
+    <title>Spyglass</title>
+
+</head>
+<body>
 
 <div id="create-session-header-form">
     <form method="post" action="../create">
-        <p><select name="method">
-        <option>DELETE</option>
-        <option selected="selected">GET</option>
-        <option>POST</option>
-        <option>PUT</option>
-        </select> <input type="text" name="url" class="url-input" value="http://" />
+    
+        <p>{{ create_session_form.method }} {{ create_session_form.url }}
+        {{ create_session_form.follow_redirects }} <label for="follow_redirects">Follow redirects</label>
         <input type="submit" value="Make it So" /></p>
     </form>
 </div>
 
 <div class="session-listing">
-    <p>Request <span class="datetime"> for {{ session.http_url }} sent {{ session.time_requested }}</span> <span class="actions"><a href="./{{session.id}}/resend">resend</a></span></p>
-    <table class="request code-listing">
+    <p>Request <span class="datetime"> for {{ session.http_url }} sent {{ session.time_requested }}</span>
+        <span class="actions">
+            <a href="./{{session.id}}/resend">resend</a>
+            {% if user.is_authenticated and user.is_staff %}
+            <a href="{% url admin:spyglass_httpsession_change session.id %}">admin</a>
+            {% endif %}
+        </span>
+    </p>
+    <div class="request code-listing">
+    <table>
         <tr>
             <td class="linenos"><pre><code>{{ request_linenos }}</code></pre></td>
             <td class="data"><pre><code>{{ pretty_request|safe }}</code></pre></td>
         </tr>
     </table>
+    </div>
 </div>
+
+{% for redirect in session.httpredirect_set.all %}
+<p class="followed-redirect">redirected to {{ redirect.url }}</p>
+{% endfor %}
 
 <div class="session-listing">
     <p>Response <span class="datetime">completed in {{ elapsed_milliseconds }} <abbr title="milliseconds">ms</abbr></span></p>
-    <table class="response code-listing">
+    <div class="request code-listing">
+    <table>
         <tr>
             <td class="linenos"><pre><code>{{ response_linenos }}</code></pre></td>
             <td class="data"><pre><code>{{ pretty_response|safe }}</code></pre></td>
         </tr>
     </table>
+    </div>
 </div>
+
+</body>
+</html>

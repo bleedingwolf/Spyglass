@@ -4,7 +4,7 @@ from django.template.defaultfilters import force_escape
 import json
 from pygments import highlight
 from pygments.formatters import HtmlFormatter as PygmentsHtmlFormatter
-from pygments.lexers import get_lexer_for_mimetype, JavascriptLexer
+from pygments.lexers import guess_lexer, JavascriptLexer
 
 
 class HttpHeadersFormatter(object):
@@ -18,8 +18,11 @@ class HttpHeadersFormatter(object):
         for header in split_headers[1:]:
             if not header:
                 continue
-            h, v = header.split(':', 1)
-            pretty_h = '<span class="header">%s:</span><span class="header-value">%s</span>' % (h, v)
+            try:
+                h, v = header.split(':', 1)
+            except ValueError:
+                continue
+            pretty_h = '<span class="ss">%s:</span><span class="s">%s</span>' % (h, v)
             pretty_headers.append(pretty_h)
         
         result = '\r\n'.join([status] + pretty_headers)
@@ -37,7 +40,10 @@ class HtmlFormatter(object):
         
         pretty_body = self._format_body(body)
         
-        return pretty_headers + '\r\n\r\n' + pretty_body
+        separator = '\r\n'
+        if pretty_body.strip():
+            separator = '\r\n\r\n'
+        return pretty_headers + separator + pretty_body
     
     def _format_body(self, response_body):
         try:
@@ -49,7 +55,9 @@ class HtmlFormatter(object):
             pretty_response_body = highlight(response_body, lexer, formatter)
         except ValueError:
             # response_body is not JSON
-            pretty_response_body = force_escape(response_body)
+            lexer = guess_lexer(response_body)
+            formatter = PygmentsHtmlFormatter(nowrap=True)
+            pretty_response_body = highlight(response_body, lexer, formatter)
             
         return pretty_response_body
     
@@ -69,3 +77,8 @@ def separate_headers_and_body(raw_text):
     body = '\r\n'.join(split_text[len(header_list)+1:])
     
     return headers, body
+
+
+def html_line_numbers(raw_text):
+    split_data = raw_text.splitlines()
+    return '\r\n'.join([str(i+1) for i in xrange(len(split_data))])
