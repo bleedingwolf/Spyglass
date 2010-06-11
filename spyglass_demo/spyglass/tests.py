@@ -43,6 +43,23 @@ class HttpSessionTest(TestCase):
         
         self.failIf(s.needs_to_send_request())
 
+    def test_raw_request_with_body(self):
+    
+        body = '''
+            <fake-xml>
+                <key>com.bleedingwolf.PrincipalClass</key>
+                <value>SomeClassName</value>
+            </fake-xml>
+        '''
+        content_length = len(body)
+        
+        s = HttpSession(http_method='POST', http_url='http://localhost:9000/endpoint', http_body=body)
+        
+        expected_request = '''POST /endpoint HTTP/1.1\r\nHost: localhost\r\n''' + \
+            '''Accept: */*\r\nContent-Length: %d\r\n\r\n%s''' % (content_length, body)
+                
+        self.failUnlessEqual(s.get_raw_request(), expected_request)
+
 
 class PrettifySessionTest(TestCase):
 

@@ -19,7 +19,8 @@ def create_session(request):
         if f.is_valid():
             s = HttpSession(http_method=f.cleaned_data['method'],
                 http_url=f.cleaned_data['url'],
-                follow_redirects=f.cleaned_data['follow_redirects'])
+                follow_redirects=f.cleaned_data['follow_redirects'],
+                http_body=f.cleaned_data['body'])
             s.save()
             if s.pk:
                 # save was successful

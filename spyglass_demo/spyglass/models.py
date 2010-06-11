@@ -4,8 +4,14 @@ from django.db import models
 from urlparse import urlparse
 
 
-def format_request(method, hostname, path):
-    return '%s %s HTTP/1.1\r\nHost: %s\r\nAccept: */*\r\n\r\n' % (method, path, hostname)
+def format_request(method, hostname, path, body=None):
+    headers = '%s %s HTTP/1.1\r\nHost: %s\r\nAccept: */*\r\n' % (method, path, hostname)
+    if body:
+        content_length = len(body)
+        headers += 'Content-Length: %d\r\n\r\n%s' % (content_length, body)
+        return headers
+    else:
+        return '%s %s HTTP/1.1\r\nHost: %s\r\nAccept: */*\r\n\r\n' % (method, path, hostname)
 
 
 class HttpSession(models.Model):
@@ -24,6 +30,7 @@ class HttpSession(models.Model):
 
     http_method = models.CharField('HTTP method', max_length=200, choices=HTTP_METHOD_CHOICES)
     http_url = models.CharField('HTTP URL', max_length=500)
+    http_body = models.TextField('HTTP body', blank=True)
     follow_redirects = models.BooleanField(default=True)
     
     http_response = models.TextField('HTTP response', blank=True)
@@ -45,7 +52,7 @@ class HttpSession(models.Model):
         parsed = urlparse(self.http_url)
         path = parsed.path or '/'
         hostname = parsed.hostname
-        return format_request(self.http_method, hostname, path)
+        return format_request(self.http_method, hostname, path, self.http_body)
     
     class Meta:
         verbose_name = 'HTTP session'
