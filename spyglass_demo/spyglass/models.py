@@ -50,7 +50,12 @@ class HttpSession(models.Model):
         
     def get_raw_request(self):
         parsed = urlparse(self.http_url)
+        
         path = parsed.path or '/'
+        qs = parsed.query or ''
+        if qs:
+            path = path + '?' + qs
+        
         hostname = parsed.hostname
         return format_request(self.http_method, hostname, path, self.http_body)
     

@@ -42,6 +42,13 @@ class HttpSessionTest(TestCase):
         s.time_completed = datetime.datetime.now()
         
         self.failIf(s.needs_to_send_request())
+        
+    def test_raw_request_with_querystring(self):
+    
+        s = HttpSession(http_method='GET', http_url='http://api.flickr.com/services/rest/?method=flickr.photos.getExif')
+        expected_request = 'GET /services/rest/?method=flickr.photos.getExif HTTP/1.1\r\n' + \
+            'Host: api.flickr.com\r\nAccept: */*\r\n\r\n'
+        self.failUnlessEqual(s.get_raw_request(), expected_request)
 
     def test_raw_request_with_body(self):
     

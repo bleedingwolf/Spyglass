@@ -14,7 +14,7 @@ html, body, div, table, tr, td, pre, code, p, h1, h2, h3, h4, h5, h6, abbr, labe
 }
 
 body {
-    margin: 20px;
+
 }
 
 .session-listing {
@@ -76,6 +76,12 @@ body {
     padding: 6px 12px 4px 12px;
 }
 
+#common-header {
+    background: #eee;
+    padding: 5px;
+    border-bottom: 1px solid #ddd;
+}
+
 #create-session-header-form {
     width: 918px;
     margin: 20px auto;
@@ -83,13 +89,17 @@ body {
 }
 
     #create-session-header-form .url-input {
-        width: 630px;
+        width: 480px;
     }
     
     #create-session-header-form label {
         margin-right: 10px;
     }
 
+    #create-session-header-form .advanced-link {
+        font-size: 90%;
+        margin-left: 10px;
+    }
 
 .hll { background-color: #ffffcc }
 .c { color: #408080; font-style: italic } /* Comment */
@@ -160,13 +170,19 @@ body {
 </head>
 <body>
 
-<div id="create-session-header-form">
-    <form method="post" action="../create">
-    
-        <p>{{ create_session_form.method }} {{ create_session_form.url }}
-        {{ create_session_form.follow_redirects }} <label for="follow_redirects">Follow redirects</label>
-        <input type="submit" value="Make it So" /></p>
-    </form>
+<div id="common-header">
+
+    <div id="create-session-header-form">
+        <form method="post" action="../create">
+        
+            <p>{{ create_session_form.method }} {{ create_session_form.url }}
+            {{ create_session_form.follow_redirects }} <label for="follow_redirects">Follow redirects</label>
+            <input type="submit" value="Make it So" />
+            <a class="advanced-link" href="{% url spyglass.views.create_session %}">Create Advanced Request&hellip;</a>
+            </p>
+        </form>
+    </div>
+
 </div>
 
 <div class="session-listing">
