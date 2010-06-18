@@ -14,15 +14,12 @@
     
     <div id="create-session-header-form">
     
+        <h3 class="hidden-at-page-load">an http client</h3>
         <h2>Spyglass</h2>
     
         <form method="post" action="">
         
             {% include "spyglass/fragment_session_form.html" %}
-            
-            {% for error in form.errors %}
-            <p>{{ error }}</p>
-            {% endfor %}
 
         </form>
     </div>

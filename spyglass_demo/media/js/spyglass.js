@@ -1,22 +1,67 @@
 
-$(document).ready(function(){
+var mouse_coords = null;
+
+$(document).ready( function() {
     $('select.spyglass-dropdown').each( function(idx, el) {
         setupDropdown($(el));
     });
     
+    fixHowStupidGeckoIs();
+    
     $('input.url-input').keyup(warnAboutNoHttps);
     
-    fixHowStupidGeckoIs();
+    if($('body').hasClass('create-session-page')) {
+        $('.hidden-at-page-load').hide();
+        $('html').mousemove(fadeInOtherControls);
+    }
+    
+    var url_value = $('#create-session-header-form .url-input').val();
+    setSelectionRange($('#create-session-header-form .url-input')[0], url_value.length, url_value.length);
 });
+
+function setSelectionRange(textElem, selectionStart, selectionEnd) {
+    // copy-pasta from http://bytes.com/topic/javascript/answers/151663-changing-selected-text-textarea
+    if (textElem.setSelectionRange) { // FF
+    
+        window.setTimeout( function(x,posL, posR) { // bug 265159
+            return function(){ x.setSelectionRange(posL, posR); };
+        }(textElem, selectionStart, selectionEnd), 100);
+        
+    } else if (textElem.createTextRange) { // IE
+    
+        var range = textElem.createTextRange();
+        range.collapse(true);
+        range.moveEnd('character', selectionEnd);
+        range.moveStart('character', selectionStart);
+        range.select();
+    }
+}
+
 
 function fixHowStupidGeckoIs() {
     if($.browser.mozilla) {
         var current = $('.spyglass-dropdown').css('font-size');
         current = current.replace('px', '');
         var fixed = (parseInt(current) + 1) + 'px';
-        console.log(fixed);
         $('.spyglass-dropdown').css('font-size', fixed);
+        $('.spyglass-dropdown .option').css('font-size', fixed);
     }
+}
+
+function fadeInOtherControls(event) {
+    var event_coords = {x: event.pageX, y: event.pageY };
+
+    if(mouse_coords != null) {
+        if(!coordsAreEqual(mouse_coords, event_coords)) {
+            $('.hidden-at-page-load').fadeIn(500);
+            $('html').unbind('mousemove', fadeInOtherControls);
+        }
+    }
+    mouse_coords = event_coords;
+}
+
+function coordsAreEqual(a, b) {
+    return (a.x == b.x && a.y == b.y);
 }
 
 function setupDropdown(select) {

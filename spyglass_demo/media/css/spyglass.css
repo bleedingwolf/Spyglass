@@ -153,9 +153,19 @@ body.create-session-page {
 
     body.create-session-page #create-session-header-form h2 {
         font-size: 200%;
-        margin-bottom: 20px;
-        text-align: center;
+        text-align: right;
+        width: 112px;
         font-weight: normal;
+        margin-bottom: 15px;
+    }
+    
+    body.create-session-page #create-session-header-form h3 {
+        color: #888;
+        text-align: right;
+        width: 112px;
+        font-weight: normal;
+        position: absolute;
+        margin-top: -14px;
     }
 
     body.create-session-page #create-session-header-form {
