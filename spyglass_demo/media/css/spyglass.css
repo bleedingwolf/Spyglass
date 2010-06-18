@@ -23,7 +23,6 @@ html, body, div, table, tr, td, pre, code, p, h1, h2, h3, h4, h5, h6, abbr, labe
 }
 
 .session-listing p {
-    font-family: Monaco, 'Courier New', 'DejaVu Sans Mono', 'Bitstream Vera Sans Mono', monospace;
     padding: 6px 12px 4px 12px;
     border-bottom: 1px solid #ccc;
     background: #f0f0f0;
@@ -53,11 +52,9 @@ html, body, div, table, tr, td, pre, code, p, h1, h2, h3, h4, h5, h6, abbr, labe
     padding-left: 10px;
     color: #000;
     vertical-align: top;
-    font-family: 'Bitstream Vera Sans Mono', Courier, monospace;
 }
 
 .followed-redirect {
-    font-family: 'Bitstream Vera Sans Mono', Courier, monospace;
     width: 894px;
     background: #f8f8ff;
     border: 1px solid #ccc;
@@ -74,7 +71,6 @@ html, body, div, table, tr, td, pre, code, p, h1, h2, h3, h4, h5, h6, abbr, labe
 #create-session-header-form {
     width: 918px;
     margin: 20px auto;
-    font-family: sans-serif;
 }
     
     #create-session-header-form label {
@@ -86,47 +82,52 @@ html, body, div, table, tr, td, pre, code, p, h1, h2, h3, h4, h5, h6, abbr, labe
         margin-left: 10px;
     }
 
-    #create-session-header-form .url-input-wrapper {
+    #create-session-header-form .form-bar-wrapper {
         border-bottom: 1px solid #e7e7e7;
         border-right: 1px solid #e7e7e7;
         display: inline-block;
         padding: 0;
         margin: 0;
+        position: relative;
+    }
+    
+    #create-session-header-form .form-bar-wrapper .inner {
+        border-bottom: 1px solid #999;
+        border-right: 1px solid #999;
     }
 
     #create-session-header-form button {
         border-top: 1px solid #ccc;
         border-left: 1px solid #ccc;
-        border-bottom: none;
-        border-right: none;
         padding: 0;
         margin: 0;
+        border-right: none;
+        border-bottom: none;
+        background: #f1f1f1;
+        background: -webkit-gradient(linear, 0% 0%, 0% 100%, from(#f1f1f1), to(#dfdfdf));
+        color: #333;
+        text-shadow: 0px 1px 0px #fff;
+        padding: 5px 8px 5px 8px;
+        cursor: pointer;
+        font-size: 15px;
+        float: left;
     }
     
-        #create-session-header-form button::-moz-focus-inner { 
+        #create-session-header-form button::-moz-focus-inner {
             border: 0;
             padding: 0;
         }
-    
-        #create-session-header-form button span {
-            border-right: 1px solid #999;
-            border-bottom: 1px solid #999;
-            border-top: 1px solid #fff;
-            color: #333;
-            background: -webkit-gradient(linear, 0% 0%, 0% 100%, from(#f1f1f1), to(#dfdfdf));
-            text-shadow: 0px 1px 0px #fff;
-            padding: 4px 8px 5px 8px;
-            margin: 0;
-            font-size: 16px;
-            display: block;
-            cursor: pointer;
-        }
         
-        #create-session-header-form button:active span {
-            border-top: 1px solid #eee;
+        #create-session-header-form button:active {
             background: #ddd;
         }
 
+    
+    #create-session-header-form .url-input-wrapper {
+        margin: 0;
+        padding: 0;
+        float: left;
+    }
     
     #create-session-header-form .url-input {
         width: 670px;
@@ -134,7 +135,7 @@ html, body, div, table, tr, td, pre, code, p, h1, h2, h3, h4, h5, h6, abbr, labe
         padding: 5px;
         border: 1px solid #ccc;
         border-right: none;
-        border-bottom: 1px solid #999;
+        border-bottom: none;
         margin: 0;
     }
     
@@ -175,7 +176,7 @@ body.create-session-page {
 .spyglass-dropdown {
     border-top: 1px solid #ccc;
     border-left: 1px solid #ccc;
-    border-bottom: 1px solid #999;
+    border-bottom: none;
     font-size: 16px;
     padding: 0.4em 10px 0.3em 10px;
     background: #f1f1f1 url('../img/dropdown-arrows.gif') 97px center no-repeat;
@@ -185,6 +186,7 @@ body.create-session-page {
     color: #333;
     display: inline-block;
     text-align: right;
+    float: left;
 }
 
     .spyglass-dropdown:hover {
@@ -218,6 +220,21 @@ body.create-session-page {
     background: red;
     color: white;
     padding: 6px;
-    font-family: sans-serif;
     font-size: 14px;
+}
+
+/* Fonts */
+
+.https-warning,
+#create-session-header-form {
+    font-family: Arial, Verdana, sans-serif;
+}
+
+.session-listing p {
+    font-family: Monaco, 'Courier New', 'DejaVu Sans Mono', 'Bitstream Vera Sans Mono', monospace;
+}
+
+.code-listing .data,
+.followed-redirect {
+    font-family: 'Bitstream Vera Sans Mono', Courier, monospace;
 }

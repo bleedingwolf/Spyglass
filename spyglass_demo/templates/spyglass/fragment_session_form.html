@@ -1,9 +1,11 @@
         
 {% spaceless %}
-<div class="url-input-wrapper">
-    {{ form.method }} {{ form.url }}
-    <button type="submit"><span>Send Request</span></button>
-</div>
+<div class="form-bar-wrapper"><div class="inner">
+    {{ form.method }} 
+    <div class="url-input-wrapper">{{ form.url }}</div>
+    <button type="submit">Send Request</button>
+    <div style="clear: both; background: red;"></div>
+</div></div>
 {% endspaceless %}
 
 <div class="under-input hidden-at-page-load">{{ form.follow_redirects }} {{ form.follow_redirects.label_tag }}

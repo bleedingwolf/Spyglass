@@ -39,12 +39,17 @@ function setSelectionRange(textElem, selectionStart, selectionEnd) {
 
 
 function fixHowStupidGeckoIs() {
-    if($.browser.mozilla) {
-        var current = $('.spyglass-dropdown').css('font-size');
+
+    var increaseByPixels = function(elem, prop, px) {
+        var current = elem.css(prop);
         current = current.replace('px', '');
-        var fixed = (parseInt(current) + 1) + 'px';
-        $('.spyglass-dropdown').css('font-size', fixed);
-        $('.spyglass-dropdown .option').css('font-size', fixed);
+        var fixed = (parseInt(current) + px) + 'px';
+        elem.css(prop, fixed);    
+    }
+
+    if($.browser.mozilla) {
+        increaseByPixels($('.form-bar-wrapper button'), 'padding-top', 1);
+        increaseByPixels($('.form-bar-wrapper button'), 'padding-bottom', 1);
     }
 }
 
