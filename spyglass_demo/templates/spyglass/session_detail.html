@@ -1,0 +1,61 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+<head>
+
+    <link rel='stylesheet' type='text/css' href='{{ MEDIA_URL }}css/reset.css' />
+    <link rel='stylesheet' type='text/css' href='{{ MEDIA_URL }}css/spyglass.css' />
+    <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.4.2/jquery.min.js"></script>
+    <script type="text/javascript" src="{{ MEDIA_URL }}js/spyglass.js"></script>
+
+    <title>Spyglass</title>
+
+</head>
+<body>
+
+<div id="common-header">
+
+    <div id="create-session-header-form">
+        <form method="post" action="../create">
+            {% include "spyglass/fragment_session_form.html" %}            
+        </form>
+    </div>
+
+</div>
+
+<div class="session-listing">
+    <p>Request <span class="datetime"> for {{ session.http_url }} sent {{ session.time_requested }}</span>
+        <span class="actions">
+            <a href="./{{session.id}}/resend">resend</a>
+            {% if user.is_authenticated and user.is_staff %}
+            <a href="{% url admin:spyglass_httpsession_change session.id %}">admin</a>
+            {% endif %}
+        </span>
+    </p>
+    <div class="request code-listing">
+    <table>
+        <tr>
+            <td class="linenos"><pre><code>{{ request_linenos }}</code></pre></td>
+            <td class="data"><pre><code>{{ pretty_request|safe }}</code></pre></td>
+        </tr>
+    </table>
+    </div>
+</div>
+
+{% for redirect in session.httpredirect_set.all %}
+<p class="followed-redirect">redirected to {{ redirect.url }}</p>
+{% endfor %}
+
+<div class="session-listing">
+    <p>Response <span class="datetime">completed in {{ elapsed_milliseconds }} <abbr title="milliseconds">ms</abbr></span></p>
+    <div class="request code-listing">
+    <table>
+        <tr>
+            <td class="linenos"><pre><code>{{ response_linenos }}</code></pre></td>
+            <td class="data"><pre><code>{{ pretty_response|safe }}</code></pre></td>
+        </tr>
+    </table>
+    </div>
+</div>
+
+</body>
+</html>

@@ -14,6 +14,8 @@ from spyglass.forms import HttpSessionForm
 def create_session(request):
     
     if request.method == "POST":
+        
+        print request.POST
     
         f = HttpSessionForm(request.POST)
         if f.is_valid():
@@ -35,7 +37,7 @@ def create_session(request):
         'form': f,
     }
     
-    return render_to_response('spyglass/create_session.html', context)
+    return render_to_response('spyglass/create_session.html', context, context_instance=RequestContext(request))
 
 
 def session_resend(request, session_id):
@@ -71,6 +73,13 @@ def session_detail(request, session_id):
     pretty_response = html_formatter.format(session.http_response)
 
     session_time = session.time_completed - session.time_requested
+    
+    form_values = {
+        'url': session.http_url,
+        'follow_redirects': session.follow_redirects,
+        'method': session.http_method,
+    }
+    form = HttpSessionForm(form_values)
         
     context = {
         'session': session,
@@ -79,7 +88,7 @@ def session_detail(request, session_id):
         'request_linenos': html_line_numbers(pretty_request),
         'response_linenos': html_line_numbers(pretty_response),
         'elapsed_milliseconds': session_time.microseconds / 1000.0,
-        'create_session_form': HttpSessionForm()
+        'form': form
     }
     
-    return render_to_response('spyglass/session_detail.html', context)    
+    return render_to_response('spyglass/session_detail.html', context, context_instance=RequestContext(request))    

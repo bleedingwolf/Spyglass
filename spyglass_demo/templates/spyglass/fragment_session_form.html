@@ -1,0 +1,11 @@
+        
+{% spaceless %}
+<div class="url-input-wrapper">
+    {{ form.method }} {{ form.url }}
+    <button type="submit"><span>Send Request</span></button>
+</div>
+{% endspaceless %}
+
+<div class="under-input">{{ form.follow_redirects }} {{ form.follow_redirects.label_tag }}
+    <a href="#">Advanced Options</a>
+</div>

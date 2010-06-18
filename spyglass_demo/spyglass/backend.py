@@ -124,6 +124,6 @@ def run_session(session, url=None, follow_redirects=False):
             decompressed_body = gzip.GzipFile(fileobj=io).read()
             raw_response_body = decompressed_body
         
-        session.http_response = raw_response_headers + raw_response_body
+        session.http_response = status + raw_response_headers + raw_response_body
         session.time_completed = datetime.datetime.now()
         session.save()

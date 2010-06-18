@@ -1,0 +1,31 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+<head>
+
+    <link rel='stylesheet' type='text/css' href='{{ MEDIA_URL }}css/reset.css' />
+    <link rel='stylesheet' type='text/css' href='{{ MEDIA_URL }}css/spyglass.css' />
+    <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.4.2/jquery.min.js"></script>
+    <script type="text/javascript" src="{{ MEDIA_URL }}js/spyglass.js"></script>
+
+    <title>Spyglass</title>
+
+</head>
+<body class="create-session-page">
+    
+    <div id="create-session-header-form">
+    
+        <h2>Spyglass</h2>
+    
+        <form method="post" action="">
+        
+            {% include "spyglass/fragment_session_form.html" %}
+            
+            {% for error in form.errors %}
+            <p>{{ error }}</p>
+            {% endfor %}
+
+        </form>
+    </div>
+
+</body>
+</html>
