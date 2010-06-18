@@ -5,7 +5,19 @@ $(document).ready(function(){
     });
     
     $('input.url-input').keyup(warnAboutNoHttps);
+    
+    fixHowStupidGeckoIs();
 });
+
+function fixHowStupidGeckoIs() {
+    if($.browser.mozilla) {
+        var current = $('.spyglass-dropdown').css('font-size');
+        current = current.replace('px', '');
+        var fixed = (parseInt(current) + 1) + 'px';
+        console.log(fixed);
+        $('.spyglass-dropdown').css('font-size', fixed);
+    }
+}
 
 function setupDropdown(select) {
         
@@ -22,9 +34,6 @@ function setupDropdown(select) {
     
     var dropdown = $(document.createElement('div'));
     dropdown.addClass('spyglass-dropdown');
-    dropdown.css('display', 'inline-block');
-    dropdown.css('text-align', 'right');
-    dropdown.width(90);
     
     dropdown.append(input);
     dropdown.append(text_wrapper);

@@ -1,4 +1,6 @@
 
+@import url('pygments.css');
+
 html, body, div, table, tr, td, pre, code, p, h1, h2, h3, h4, h5, h6, abbr, label {
     font-size: 12px;
     line-height: normal;
@@ -74,10 +76,6 @@ html, body, div, table, tr, td, pre, code, p, h1, h2, h3, h4, h5, h6, abbr, labe
     margin: 20px auto;
     font-family: sans-serif;
 }
-
-    #create-session-header-form .url-input {
-        width: 480px;
-    }
     
     #create-session-header-form label {
         margin-right: 10px;
@@ -87,43 +85,67 @@ html, body, div, table, tr, td, pre, code, p, h1, h2, h3, h4, h5, h6, abbr, labe
         font-size: 90%;
         margin-left: 10px;
     }
+
+    #create-session-header-form .url-input-wrapper {
+        border-bottom: 1px solid #e7e7e7;
+        border-right: 1px solid #e7e7e7;
+        display: inline-block;
+        padding: 0;
+        margin: 0;
+    }
+
+    #create-session-header-form button {
+        border-top: 1px solid #ccc;
+        border-left: 1px solid #ccc;
+        border-bottom: none;
+        border-right: none;
+        padding: 0;
+        margin: 0;
+    }
     
-    #create-session-header-form .request-body {
+        #create-session-header-form button::-moz-focus-inner { 
+            border: 0;
+            padding: 0;
+        }
+    
+        #create-session-header-form button span {
+            border-right: 1px solid #999;
+            border-bottom: 1px solid #999;
+            border-top: 1px solid #fff;
+            color: #333;
+            background: -webkit-gradient(linear, 0% 0%, 0% 100%, from(#f1f1f1), to(#dfdfdf));
+            text-shadow: 0px 1px 0px #fff;
+            padding: 4px 8px 5px 8px;
+            margin: 0;
+            font-size: 16px;
+            display: block;
+            cursor: pointer;
+        }
+        
+        #create-session-header-form button:active span {
+            border-top: 1px solid #eee;
+            background: #ddd;
+        }
+
+    
+    #create-session-header-form .url-input {
+        width: 670px;
+        font-size: 16px;
+        padding: 5px;
+        border: 1px solid #ccc;
+        border-right: none;
+        border-bottom: 1px solid #999;
+        margin: 0;
+    }
+    
+    #create-session-header-form .under-input {
+        margin-left: 110px;    
         margin-top: 10px;
     }
     
-    #create-session-header-form .request-body label {
-        font-weight: bold;
-        margin-right: 0;
-        padding-left: 2px;
-    }
-
-#create-session-header-form button {
-    border-top: 1px solid #ccc;
-    border-left: 1px solid #ccc;
-    border-bottom: none;
-    border-right: none;
-    padding: 0;
-    margin: 0;
-}
-
-    #create-session-header-form button span {
-        border-right: 1px solid #999;
-        border-bottom: 1px solid #999;
-        border-top: 1px solid #fff;
-        background: #f1f1f1;
-        padding: 4px 8px 6px 8px;
-        margin: 0;
-        height: 17px;
-        font-size: 15px;
-        display: block;
-        cursor: pointer;
-    }
-    
-    #create-session-header-form button:active span {
-        border-top: 1px solid #eee;
-        background: #ddd;
-    }
+        #create-session-header-form .under-input label {
+            font-size: 14px;
+        }
 
 body.create-session-page {
     background: #fff;
@@ -140,53 +162,23 @@ body.create-session-page {
         margin-top: 140px;
     }
     
-    #create-session-header-form .url-input {
-        width: 675px;
-        font-size: 16px;
-        padding: 5px;
-        border: 1px solid #ccc;
-        border-right: none;
-        border-bottom: 1px solid #999;
-        margin: 0;
-    }
-    
-    #create-session-header-form .url-input-wrapper {
-        border-bottom: 1px solid #e7e7e7;
-        border-right: 1px solid #e7e7e7;
-        display: inline-block;
-        padding: 0;
-    }
-    
-    #create-session-header-form .under-input {
-        margin-left: 110px;    
-        margin-top: 10px;
-    }
-    
-        #create-session-header-form .under-input label {
-            font-size: 14px;
-        }
-    
 .spyglass-dropdown {
     border-top: 1px solid #ccc;
     border-left: 1px solid #ccc;
     border-bottom: 1px solid #999;
     font-size: 16px;
-    padding: 6px 10px 4px 10px;
-    background: #f1f1f1;
+    padding: 0.4em 10px 0.3em 10px;
+    background: #f1f1f1 url('../img/dropdown-arrows.gif') 97px center no-repeat;
     position: relative;
     cursor: pointer;
+    width: 90px;
+    color: #333;
+    display: inline-block;
+    text-align: right;
 }
 
     .spyglass-dropdown:hover {
-        background: #ddd;
-    }
-
-    .spyglass-dropdown .arrow {
-        font-size: 9px;
-        color: #444;
-        position: absolute;
-        right: 4px;
-        top: 10px;
+        background-color: #ddd;
     }
     
     .spyglass-dropdown .option {
@@ -219,66 +211,3 @@ body.create-session-page {
     font-family: sans-serif;
     font-size: 14px;
 }
-
-.hll { background-color: #ffffcc }
-.c { color: #408080; font-style: italic } /* Comment */
-.err { border: 1px solid #FF0000 } /* Error */
-.k { color: #008000; font-weight: bold } /* Keyword */
-.o { color: #666666 } /* Operator */
-.cm { color: #408080; font-style: italic } /* Comment.Multiline */
-.cp { color: #BC7A00 } /* Comment.Preproc */
-.c1 { color: #408080; font-style: italic } /* Comment.Single */
-.cs { color: #408080; font-style: italic } /* Comment.Special */
-.gd { color: #A00000 } /* Generic.Deleted */
-.ge { font-style: italic } /* Generic.Emph */
-.gr { color: #FF0000 } /* Generic.Error */
-.gh { color: #000080; font-weight: bold } /* Generic.Heading */
-.gi { color: #00A000 } /* Generic.Inserted */
-.go { color: #808080 } /* Generic.Output */
-.gp { color: #000080; font-weight: bold } /* Generic.Prompt */
-.gs { font-weight: bold } /* Generic.Strong */
-.gu { color: #800080; font-weight: bold } /* Generic.Subheading */
-.gt { color: #0040D0 } /* Generic.Traceback */
-.kc { color: #008000; font-weight: bold } /* Keyword.Constant */
-.kd { color: #008000; font-weight: bold } /* Keyword.Declaration */
-.kn { color: #008000; font-weight: bold } /* Keyword.Namespace */
-.kp { color: #008000 } /* Keyword.Pseudo */
-.kr { color: #008000; font-weight: bold } /* Keyword.Reserved */
-.kt { color: #B00040 } /* Keyword.Type */
-.m { color: #666666 } /* Literal.Number */
-.s { color: #BA2121 } /* Literal.String */
-.na { color: #7D9029 } /* Name.Attribute */
-.nb { color: #008000 } /* Name.Builtin */
-.nc { color: #0000FF; font-weight: bold } /* Name.Class */
-.no { color: #880000 } /* Name.Constant */
-.nd { color: #AA22FF } /* Name.Decorator */
-.ni { color: #999999; font-weight: bold } /* Name.Entity */
-.ne { color: #D2413A; font-weight: bold } /* Name.Exception */
-.nf { color: #0000FF } /* Name.Function */
-.nl { color: #A0A000 } /* Name.Label */
-.nn { color: #0000FF; font-weight: bold } /* Name.Namespace */
-.nt { color: #008000; font-weight: bold } /* Name.Tag */
-.nv { color: #19177C } /* Name.Variable */
-.ow { color: #AA22FF; font-weight: bold } /* Operator.Word */
-.w { color: #bbbbbb } /* Text.Whitespace */
-.mf { color: #666666 } /* Literal.Number.Float */
-.mh { color: #666666 } /* Literal.Number.Hex */
-.mi { color: #666666 } /* Literal.Number.Integer */
-.mo { color: #666666 } /* Literal.Number.Oct */
-.sb { color: #BA2121 } /* Literal.String.Backtick */
-.sc { color: #BA2121 } /* Literal.String.Char */
-.sd { color: #BA2121; font-style: italic } /* Literal.String.Doc */
-.s2 { color: #BA2121 } /* Literal.String.Double */
-.se { color: #BB6622; font-weight: bold } /* Literal.String.Escape */
-.sh { color: #BA2121 } /* Literal.String.Heredoc */
-.si { color: #BB6688; font-weight: bold } /* Literal.String.Interpol */
-.sx { color: #008000 } /* Literal.String.Other */
-.sr { color: #BB6688 } /* Literal.String.Regex */
-.s1 { color: #BA2121 } /* Literal.String.Single */
-.ss { color: #19177C } /* Literal.String.Symbol */
-.bp { color: #008000 } /* Name.Builtin.Pseudo */
-.vc { color: #19177C } /* Name.Variable.Class */
-.vg { color: #19177C } /* Name.Variable.Global */
-.vi { color: #19177C } /* Name.Variable.Instance */
-.il { color: #666666 } /* Literal.Number.Integer.Long */
-

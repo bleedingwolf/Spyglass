@@ -17,10 +17,10 @@ def format_request(method, hostname, path, body=None):
 class HttpSession(models.Model):
 
     HTTP_METHODS = (
-        'DELETE',
         'GET',
         'POST',
         'PUT',
+        'DELETE',
     )
     
     HTTP_METHOD_CHOICES = [(x,x) for x in HTTP_METHODS]
