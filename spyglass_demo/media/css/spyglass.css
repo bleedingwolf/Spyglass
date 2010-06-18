@@ -191,6 +191,7 @@ body.create-session-page {
         margin-left: 0;
         margin-bottom: 15px;
         position: static;
+        cursor: default;
     }
     
     body.create-session-page #create-session-header-form h3 {
@@ -200,6 +201,7 @@ body.create-session-page {
         font-weight: normal;
         position: absolute;
         margin-top: -14px;
+        cursor: default;
     }
 
     body.create-session-page #create-session-header-form {
