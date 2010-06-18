@@ -11,6 +11,12 @@ from spyglass.formatters import HtmlFormatter, html_line_numbers
 from spyglass.forms import HttpSessionForm
 
 
+def homepage(request):
+
+    f = HttpSessionForm()
+    context = {'form': f}
+    return render_to_response('spyglass/create_session.html', context, context_instance=RequestContext(request))
+
 def create_session(request):
     
     if request.method == "POST":
@@ -29,7 +35,9 @@ def create_session(request):
                 return redirect(s.get_absolute_url())
             else:
                 # something went wrong...
-                pass
+                print "[ERROR] Unable to save HttpSession!"
+        else:
+            print " [WARN] submitted form was invalid: " + str(f.errors)
     else:
         f = HttpSessionForm()
     
@@ -54,11 +62,12 @@ def session_resend(request, session_id):
 
 
 def session_list(request):
-    all_sessions = HttpSession.objects.all()
+    all_sessions = HttpSession.objects.all().order_by('-time_requested')
     context = {
         'session_list': all_sessions,
+        'form': HttpSessionForm()
     }
-    return render_to_response('spyglass/session_list.html', context)
+    return render_to_response('spyglass/session_list.html', context, context_instance=RequestContext(request))
 
 
 def session_detail(request, session_id):
@@ -70,9 +79,13 @@ def session_detail(request, session_id):
     run_session(session, follow_redirects=session.follow_redirects)
     
     pretty_request = html_formatter.format(session.get_raw_request())
-    pretty_response = html_formatter.format(session.http_response)
-
-    session_time = session.time_completed - session.time_requested
+    if not session.http_error:
+        pretty_response = html_formatter.format(session.http_response)
+        session_time = session.time_completed - session.time_requested
+        elapsed_milliseconds = session_time.microseconds / 1000.0
+    else:
+        pretty_response = ''
+        elapsed_milliseconds = None
     
     form_values = {
         'url': session.http_url,
@@ -87,7 +100,7 @@ def session_detail(request, session_id):
         'pretty_response': pretty_response,
         'request_linenos': html_line_numbers(pretty_request),
         'response_linenos': html_line_numbers(pretty_response),
-        'elapsed_milliseconds': session_time.microseconds / 1000.0,
+        'elapsed_milliseconds': elapsed_milliseconds,
         'form': form
     }
     

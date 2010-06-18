@@ -22,6 +22,10 @@ html, body, div, table, tr, td, pre, code, p, h1, h2, h3, h4, h5, h6, abbr, labe
     border-spacing: 0px;
 }
 
+.code-listing table pre {
+    line-height: 1.4;
+}
+
 .session-listing p {
     padding: 6px 12px 4px 12px;
     border-bottom: 1px solid #ccc;
@@ -54,12 +58,22 @@ html, body, div, table, tr, td, pre, code, p, h1, h2, h3, h4, h5, h6, abbr, labe
     vertical-align: top;
 }
 
-.followed-redirect {
+.followed-redirect,
+.http-error {
     width: 894px;
     background: #f8f8ff;
     border: 1px solid #ccc;
     margin: 20px auto;
-    padding: 6px 12px 4px 12px;
+    padding: 5px 12px 6px 12px;
+}
+
+.http-error {
+    color: #f00;
+}
+
+.centered-content {
+    width: 894px;
+    margin: 20px auto;
 }
 
 #common-header {
@@ -148,16 +162,35 @@ html, body, div, table, tr, td, pre, code, p, h1, h2, h3, h4, h5, h6, abbr, labe
             font-size: 14px;
         }
 
+    #create-session-header-form h2 {
+        font-size: 200%;
+        font-weight: normal;
+        text-align: right;
+        position: absolute;
+        width: 112px;
+        top: 27px;
+        left: 50%;
+        margin-left: -585px;
+        text-shadow: 0px 1px 0px #fff;
+    }
+    
+    #create-session-header-form h2 a {
+        color: #444;
+        text-decoration: none;
+    }
+    
+    #create-session-header-form h2 a:hover {
+        text-decoration: underline;
+    }
+
 body.create-session-page {
     background: #fff;
 }
 
     body.create-session-page #create-session-header-form h2 {
-        font-size: 200%;
-        text-align: right;
-        width: 112px;
-        font-weight: normal;
+        margin-left: 0;
         margin-bottom: 15px;
+        position: static;
     }
     
     body.create-session-page #create-session-header-form h3 {
@@ -223,8 +256,28 @@ body.create-session-page {
     font-size: 14px;
 }
 
+.centered-content h3 {
+    font-size: 130%;
+    color: #444;
+    margin-bottom: 15px;
+    border-bottom: 1px solid #ddd;
+}
+
+.session-link {
+    margin-bottom: 15px;
+}
+
+    .session-link a {
+        text-decoration: none;
+    }
+    
+    .session-link .error {
+        color: #f00;
+    }
+
 /* Fonts */
 
+html,
 .https-warning,
 #create-session-header-form {
     font-family: Arial, Verdana, sans-serif;
@@ -235,6 +288,8 @@ body.create-session-page {
 }
 
 .code-listing .data,
-.followed-redirect {
+.followed-redirect,
+.http-error,
+.session-link a {
     font-family: 'Bitstream Vera Sans Mono', Courier, monospace;
 }

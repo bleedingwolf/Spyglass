@@ -1,6 +1,27 @@
-{% extends 'spyglass/form_at_top.html' %}
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+<head>
 
-{% block title %}{{ block.super }} - {{ session }}{% endblock %}
+    <link rel='stylesheet' type='text/css' href='{{ MEDIA_URL }}css/reset.css' />
+    <link rel='stylesheet' type='text/css' href='{{ MEDIA_URL }}css/spyglass.css' />
+    <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.4.2/jquery.min.js"></script>
+    <script type="text/javascript" src="{{ MEDIA_URL }}js/spyglass.js"></script>
+
+    <title>{% block title %}Spyglass{% endblock %}</title>
+
+</head>
+<body>
+
+<div id="common-header">
+
+    <div id="create-session-header-form">
+        <h2><a href="{% url spyglass.views.homepage %}">Spyglass</a></h2>
+        <form method="post" action="{% url spyglass.views.create_session %}">
+            {% include "spyglass/fragment_session_form.html" %}            
+        </form>
+    </div>
+
+</div>
 
 {% block content %}
 <div class="session-listing">
@@ -26,7 +47,6 @@
 <p class="followed-redirect">redirected to {{ redirect.url }}</p>
 {% endfor %}
 
-{% if not session.http_error %}
 <div class="session-listing">
     <p>Response <span class="datetime">completed in {{ elapsed_milliseconds }} <abbr title="milliseconds">ms</abbr></span></p>
     <div class="request code-listing">
@@ -38,8 +58,7 @@
     </table>
     </div>
 </div>
-{% else %}
-    <p class="http-error">Error: {{ session.get_http_error_display }}</p>
-{% endif %}
-
 {% endblock content %}
+
+</body>
+</html>

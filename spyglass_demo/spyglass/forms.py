@@ -9,7 +9,7 @@ class HttpSessionForm(forms.Form):
     method = forms.ChoiceField(choices=HttpSession.HTTP_METHOD_CHOICES, initial='GET',
         widget=forms.Select(attrs={'class': 'spyglass-dropdown'}))
         
-    url = forms.URLField(initial='http://',
+    url = forms.CharField(initial='http://',
         widget=forms.TextInput(attrs={'class': 'url-input'}))
         
     follow_redirects = forms.BooleanField(initial=True, required=False)

@@ -25,14 +25,20 @@ class HttpSession(models.Model):
     
     HTTP_METHOD_CHOICES = [(x,x) for x in HTTP_METHODS]
 
+    HTTP_ERROR_CHOICES = (
+        (0, 'No Error'),
+        (1, 'Unknown Host'),
+    )
+
     time_requested = models.DateTimeField(auto_now_add=True)
     time_completed = models.DateTimeField(blank=True, null=True)
 
-    http_method = models.CharField('HTTP method', max_length=200, choices=HTTP_METHOD_CHOICES)
+    http_method = models.CharField('HTTP method', max_length=20, choices=HTTP_METHOD_CHOICES)
     http_url = models.CharField('HTTP URL', max_length=500)
     http_body = models.TextField('HTTP body', blank=True)
     follow_redirects = models.BooleanField(default=True)
     
+    http_error = models.PositiveIntegerField('HTTP error', default=0, choices=HTTP_ERROR_CHOICES)
     http_response = models.TextField('HTTP response', blank=True)
     
     def __unicode__(self):
@@ -48,8 +54,8 @@ class HttpSession(models.Model):
         parsed = urlparse(self.http_url)
         return parsed.hostname
         
-    def get_raw_request(self):
-        parsed = urlparse(self.http_url)
+    def get_raw_request(self, url=None):
+        parsed = urlparse(url or self.http_url)
         
         path = parsed.path or '/'
         qs = parsed.query or ''

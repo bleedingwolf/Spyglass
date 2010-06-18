@@ -50,6 +50,15 @@ class HttpSessionTest(TestCase):
             'Host: api.flickr.com\r\nAccept: */*\r\n\r\n'
         self.failUnlessEqual(s.get_raw_request(), expected_request)
 
+    def test_raw_request_with_alternate_url(self):
+    
+        s = HttpSession(http_method='GET', http_url='http://google.com/')
+        raw_request = s.get_raw_request('http://www.google.com/')
+        expected_request = 'GET / HTTP/1.1\r\n' + \
+            'Host: www.google.com\r\nAccept: */*\r\n\r\n'
+        
+        self.failUnlessEqual(raw_request, expected_request)
+
     def test_raw_request_with_body(self):
     
         body = '''

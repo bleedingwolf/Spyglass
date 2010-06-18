@@ -1,6 +1,20 @@
+{% extends 'spyglass/form_at_top.html' %}
+{% load humanize %}
 
-{% for session in session_list %}
+{% block title %}{{ block.super }} - Recent Requests{% endblock %}
 
-<p><a href="{{ session.get_absolute_url }}">{{ session }}</a></p>
-
-{% endfor %}
+{% block content %}
+<div class="centered-content">
+    {% for session in session_list %}
+        
+        {% ifchanged session.time_requested.day %}
+        <h3>{{ session.time_requested|naturalday|title }}</h3>
+        {% endifchanged %}
+    
+        <p class="session-link"><a href="{{ session.get_absolute_url }}">{{ session }}</a>
+        {% if session.http_error %}<span class="error">{{ session.get_http_error_display }}</span>{% endif %}
+        <br />{{ session.time_requested }}
+        </p>    
+    {% endfor %}
+</div>
+{% endblock content %}

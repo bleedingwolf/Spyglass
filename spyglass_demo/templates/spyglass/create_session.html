@@ -17,7 +17,7 @@
         <h3 class="hidden-at-page-load">an http client</h3>
         <h2>Spyglass</h2>
     
-        <form method="post" action="">
+        <form method="post" action="{% url spyglass.views.create_session %}">
         
             {% include "spyglass/fragment_session_form.html" %}
 

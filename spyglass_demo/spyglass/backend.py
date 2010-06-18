@@ -13,7 +13,9 @@ from spyglass.models import format_request, HttpRedirect
 
 def run_session(session, url=None, follow_redirects=False):
 
-    if session.needs_to_send_request():
+    print "[DEBUG] run_session(%s, %s, %s)" % (session, url, follow_redirects)
+
+    if session.needs_to_send_request() and not session.http_error:
     
         print " [INFO] Starting request for session %s" % session.id
     
@@ -32,11 +34,17 @@ def run_session(session, url=None, follow_redirects=False):
             
         port = parsed_url.port or default_port
                 
-        raw_request = session.get_raw_request()
+        raw_request = session.get_raw_request(url)
         
         print " [INFO] Making request to %s:%s..." % (hostname, port)
         sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-        sock.connect((hostname, port))
+        try:
+            sock.connect((hostname, port))
+        except socket.gaierror:
+            print "[ERROR] unknown host: %s" % hostname
+            session.http_error = 1 # TODO: make this some kind of enum
+            session.save()
+            return
         sock.sendall(raw_request)
         
         print " [INFO] Sent request, waiting for response."
