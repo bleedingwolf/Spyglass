@@ -15,6 +15,8 @@
         {% if session.http_error %}<span class="error">{{ session.get_http_error_display }}</span>{% endif %}
         <br />{{ session.time_requested }}
         </p>    
+    {% empty %}
+    <p>Oops, you haven't made any requests yet!</p>
     {% endfor %}
 </div>
 {% endblock content %}

@@ -72,6 +72,7 @@ TEMPLATE_LOADERS = (
 
 MIDDLEWARE_CLASSES = (
     'django.middleware.common.CommonMiddleware',
+    'django.middleware.http.ConditionalGetMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     #'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
@@ -87,6 +88,14 @@ TEMPLATE_DIRS = (
     os.path.join(PROJECT_DIR, 'templates'),
 )
 
+# Celery settings
+BROKER_HOST = "localhost"
+BROKER_PORT = 5672
+BROKER_USER = "spyglass-django"
+BROKER_PASSWORD = "landho"
+BROKER_VHOST = "spyglass"
+CARROT_BACKEND = "ghettoq.taproot.Database"
+
 INSTALLED_APPS = (
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -97,5 +106,7 @@ INSTALLED_APPS = (
 
     'django.contrib.admin',
     
+    'ghettoq',
+    'celery',
     'spyglass',
 )

@@ -41,6 +41,8 @@ class HttpSession(models.Model):
     http_error = models.PositiveIntegerField('HTTP error', default=0, choices=HTTP_ERROR_CHOICES)
     http_response = models.TextField('HTTP response', blank=True)
     
+    celery_task_id = models.CharField(max_length=64, default='')
+    
     def __unicode__(self):
         return u'%s %s' % (self.http_method, self.http_url)
     

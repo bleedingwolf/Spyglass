@@ -1,12 +1,15 @@
 
 import datetime
+import json
 
 from django.shortcuts import render_to_response, redirect, get_object_or_404
 from django.template import RequestContext
 from django.template.defaultfilters import force_escape
+from django.template.loader import render_to_string
+from django.http import HttpResponse
 
 from spyglass.models import HttpSession
-from spyglass.backend import run_session
+from spyglass.backend import run_session, session_is_ready
 from spyglass.formatters import HtmlFormatter, html_line_numbers
 from spyglass.forms import HttpSessionForm
 
@@ -20,8 +23,6 @@ def homepage(request):
 def create_session(request):
     
     if request.method == "POST":
-        
-        print request.POST
     
         f = HttpSessionForm(request.POST)
         if f.is_valid():
@@ -70,21 +71,44 @@ def session_list(request):
     return render_to_response('spyglass/session_list.html', context, context_instance=RequestContext(request))
 
 
+def session_completed_jsonp(request, session_id):
+
+    session = get_object_or_404(HttpSession, pk=session_id)
+    ready = session_is_ready(session)
+    
+    html_formatter = HtmlFormatter()
+    response = {'session_id': session.id}
+    
+    response['complete'] = 'true' if ready else 'false'
+    
+    if ready:
+        if session.http_error:
+            response['error'] = session.get_http_error_display()
+        else:
+            pretty_response = html_formatter.format(session.http_response)
+            response['pretty_response'] = pretty_response
+            response['response_linenos'] = html_line_numbers(pretty_response)
+            response['elapsed_milliseconds'] = (session.time_completed - session.time_requested).microseconds / 1000.0
+    
+    return HttpResponse(json.dumps(response), mimetype='application/json')
+
+
 def session_detail(request, session_id):
     
     session = get_object_or_404(HttpSession, pk=session_id)
     html_formatter = HtmlFormatter()
 
-    # TODO: this should happen async.
-    run_session(session, follow_redirects=session.follow_redirects)
+    run_session(session)
     
     pretty_request = html_formatter.format(session.get_raw_request())
-    if not session.http_error:
-        pretty_response = html_formatter.format(session.http_response)
-        session_time = session.time_completed - session.time_requested
-        elapsed_milliseconds = session_time.microseconds / 1000.0
+    
+    if session.time_completed:
+        if not session.http_error:
+            pretty_response = html_formatter.format(session.http_response)
+            session_time = session.time_completed - session.time_requested
+            elapsed_milliseconds = session_time.microseconds / 1000.0
     else:
-        pretty_response = ''
+        pretty_response = render_to_string('spyglass/fragment_loading_placeholder.html', {'session_id': session.id})
         elapsed_milliseconds = None
     
     form_values = {

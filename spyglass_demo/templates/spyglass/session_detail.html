@@ -3,7 +3,7 @@
 {% block title %}{{ block.super }} - {{ session }}{% endblock %}
 
 {% block content %}
-<div class="session-listing">
+<div class="request session-listing">
     <p>Request <span class="datetime"> for {{ session.http_url }} sent {{ session.time_requested }}</span>
         <span class="actions">
             <a href="./{{session.id}}/resend">resend</a>
@@ -12,7 +12,7 @@
             {% endif %}
         </span>
     </p>
-    <div class="request code-listing">
+    <div class="code-listing">
     <table>
         <tr>
             <td class="linenos"><pre><code>{{ request_linenos }}</code></pre></td>
@@ -27,9 +27,9 @@
 {% endfor %}
 
 {% if not session.http_error %}
-<div class="session-listing">
-    <p>Response <span class="datetime">completed in {{ elapsed_milliseconds }} <abbr title="milliseconds">ms</abbr></span></p>
-    <div class="request code-listing">
+<div class="response session-listing">
+    <p>Response <span class="datetime">{% if elapsed_milliseconds %}completed in {{ elapsed_milliseconds }} <abbr title="milliseconds">ms</abbr>{% endif %}</span></p>
+    <div class="code-listing">
     <table>
         <tr>
             <td class="linenos"><pre><code>{{ response_linenos }}</code></pre></td>

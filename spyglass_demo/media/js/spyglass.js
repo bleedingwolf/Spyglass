@@ -17,7 +17,49 @@ $(document).ready( function() {
     
     var url_value = $('#create-session-header-form .url-input').val();
     setSelectionRange($('#create-session-header-form .url-input')[0], url_value.length, url_value.length);
+    
+    setupAutoReloadingSessionPage();
 });
+
+function setupAutoReloadingSessionPage() {
+    
+    var placeholder = $('.loading-placeholder')
+    var session_id = placeholder.attr('session_id');
+    if(session_id === undefined) return;
+    
+    var url = '/sessions/' + session_id + '/is_complete.json';
+    
+    var checkWithServer = function() {
+
+        $.getJSON(url, function(data) {
+        
+            console.log("Got JSON:")
+            console.log(data)
+        
+            if(data.complete === 'true') {
+                console.log("Request finished in background");
+                
+                if(data.error) {
+                    console.log("Request had error: %d", data.error)
+                    var error_msg = $(document.createElement('p'));
+                    error_msg.text('Error: ' + data.error);
+                    error_msg.addClass('http-error');
+                    $('.response.session-listing').replaceWith(error_msg);
+                } else {
+                    placeholder.replaceWith(data.pretty_response);
+                    $('.response .linenos pre code').text(data.response_linenos);
+                    $('.response .datetime').html('completed in ' + data.elapsed_milliseconds +
+                        ' <abbr title="milliseconds">ms</abbr>')
+                }
+            } else {
+                console.warn("TODO: retry again later");
+                setTimeout(checkWithServer, 1000);
+            }
+        });    
+    }
+    
+    setTimeout(checkWithServer, 1000);
+}
 
 function setSelectionRange(textElem, selectionStart, selectionEnd) {
     // copy-pasta from http://bytes.com/topic/javascript/answers/151663-changing-selected-text-textarea

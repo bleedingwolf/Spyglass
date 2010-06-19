@@ -58,6 +58,14 @@ html, body, div, table, tr, td, pre, code, p, h1, h2, h3, h4, h5, h6, abbr, labe
     vertical-align: top;
 }
 
+.code-listing .loading-placeholder {
+    text-align: center;
+}
+
+.code-listing .loading-placeholder img {
+    vertical-align: middle;
+}
+
 .followed-redirect,
 .http-error {
     width: 894px;
