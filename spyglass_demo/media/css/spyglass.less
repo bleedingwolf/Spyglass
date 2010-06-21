@@ -1,9 +1,11 @@
 
-@import url('pygments.css');
-
 html, body, div, table, tr, td, pre, code, p, h1, h2, h3, h4, h5, h6, abbr, label {
     font-size: 12px;
     line-height: normal;
+}
+
+.clear {
+    clear: both;
 }
 
 .session-listing {
@@ -11,59 +13,60 @@ html, body, div, table, tr, td, pre, code, p, h1, h2, h3, h4, h5, h6, abbr, labe
     background: #f8f8ff;
     border: 1px solid #ccc;
     margin: 20px auto;
+    
+    p {
+        padding: 6px 12px 4px 12px;
+        border-bottom: 1px solid #ccc;
+        background: #f0f0f0;
+        font-size: 12px;
+    
+        .datetime {
+            color: #777;
+        }
+    
+        .actions {
+            float: right;
+        }
+    
+    }
 }
 
 .code-listing {
     overflow: auto;
     width: 918px;
-}
-
-.code-listing table {
-    border-spacing: 0px;
-}
-
-.code-listing table pre {
-    line-height: 1.4;
-}
-
-.session-listing p {
-    padding: 6px 12px 4px 12px;
-    border-bottom: 1px solid #ccc;
-    background: #f0f0f0;
-    font-size: 12px;
-}
-
-    .session-listing p .datetime {
-        color: #777;
+    
+    table {
+        border-spacing: 0px;
+        
+        pre {
+            line-height: 1.4;
+        }
     }
-
-    .session-listing p .actions {
-        float: right;
+    
+    .linenos {
+        padding: 10px 4px;
+        background: #ececec;
+        border-right: 1px solid #ddd;
+        color: #aaa;
+        text-align: right;
+        vertical-align: top;
+        width: 1px;
     }
-
-.code-listing .linenos {
-    padding: 10px 4px;
-    background: #ececec;
-    border-right: 1px solid #ddd;
-    color: #aaa;
-    text-align: right;
-    vertical-align: top;
-    width: 1px;
-}
-
-.code-listing .data {
-    padding: 10px 4px;
-    padding-left: 10px;
-    color: #000;
-    vertical-align: top;
-}
-
-.code-listing .loading-placeholder {
-    text-align: center;
-}
-
-.code-listing .loading-placeholder img {
-    vertical-align: middle;
+    
+    .data {
+        padding: 10px 4px;
+        padding-left: 10px;
+        color: #000;
+        vertical-align: top;
+    }
+    
+    .loading-placeholder {
+        text-align: center;
+        
+        img {
+            vertical-align: middle;
+        }
+    }
 }
 
 .followed-redirect,
@@ -82,6 +85,13 @@ html, body, div, table, tr, td, pre, code, p, h1, h2, h3, h4, h5, h6, abbr, labe
 .centered-content {
     width: 894px;
     margin: 20px auto;
+    
+    h3 {
+        font-size: 130%;
+        color: #444;
+        margin-bottom: 15px;
+        border-bottom: 1px solid #ddd;
+    }
 }
 
 #common-header {
@@ -93,32 +103,32 @@ html, body, div, table, tr, td, pre, code, p, h1, h2, h3, h4, h5, h6, abbr, labe
 #create-session-header-form {
     width: 918px;
     margin: 20px auto;
-}
+
     
-    #create-session-header-form label {
+    label {
         margin-right: 10px;
     }
 
-    #create-session-header-form .advanced-link {
+    .advanced-link {
         font-size: 90%;
         margin-left: 10px;
     }
 
-    #create-session-header-form .form-bar-wrapper {
+    .form-bar-wrapper {
         border-bottom: 1px solid #e7e7e7;
         border-right: 1px solid #e7e7e7;
         display: inline-block;
         padding: 0;
         margin: 0;
         position: relative;
-    }
     
-    #create-session-header-form .form-bar-wrapper .inner {
-        border-bottom: 1px solid #999;
-        border-right: 1px solid #999;
+        .inner {
+            border-bottom: 1px solid #999;
+            border-right: 1px solid #999;
+        }
     }
 
-    #create-session-header-form button {
+    button {
         border-top: 1px solid #ccc;
         border-left: 1px solid #ccc;
         padding: 0;
@@ -133,25 +143,24 @@ html, body, div, table, tr, td, pre, code, p, h1, h2, h3, h4, h5, h6, abbr, labe
         cursor: pointer;
         font-size: 15px;
         float: left;
-    }
     
-        #create-session-header-form button::-moz-focus-inner {
+        ::-moz-focus-inner {
             border: 0;
             padding: 0;
         }
         
-        #create-session-header-form button:active {
+        :active {
             background: #ddd;
         }
+    }
 
-    
-    #create-session-header-form .url-input-wrapper {
+    .url-input-wrapper {
         margin: 0;
         padding: 0;
         float: left;
     }
     
-    #create-session-header-form .url-input {
+    .url-input {
         width: 670px;
         font-size: 16px;
         padding: 5px;
@@ -161,16 +170,20 @@ html, body, div, table, tr, td, pre, code, p, h1, h2, h3, h4, h5, h6, abbr, labe
         margin: 0;
     }
     
-    #create-session-header-form .under-input {
+    .under-input {
         margin-left: 110px;    
         margin-top: 10px;
-    }
     
-        #create-session-header-form .under-input label {
+        label {
             font-size: 14px;
         }
+        
+        .spacer {
+            width: 443px; display: inline-block;
+        }
+    }
 
-    #create-session-header-form h2 {
+    h2 {
         font-size: 200%;
         font-weight: normal;
         text-align: right;
@@ -180,41 +193,43 @@ html, body, div, table, tr, td, pre, code, p, h1, h2, h3, h4, h5, h6, abbr, labe
         left: 50%;
         margin-left: -585px;
         text-shadow: 0px 1px 0px #fff;
-    }
     
-    #create-session-header-form h2 a {
-        color: #444;
-        text-decoration: none;
+        a {
+            color: #444;
+            text-decoration: none;
+        }
+        
+        a:hover {
+            text-decoration: underline;
+        }
     }
-    
-    #create-session-header-form h2 a:hover {
-        text-decoration: underline;
-    }
+
+}
 
 body.create-session-page {
     background: #fff;
-}
 
-    body.create-session-page #create-session-header-form h2 {
-        margin-left: 0;
-        margin-bottom: 15px;
-        position: static;
-        cursor: default;
-    }
-    
-    body.create-session-page #create-session-header-form h3 {
-        color: #888;
-        text-align: right;
-        width: 112px;
-        font-weight: normal;
-        position: absolute;
-        margin-top: -14px;
-        cursor: default;
-    }
-
-    body.create-session-page #create-session-header-form {
+    #create-session-header-form {
         margin-top: 140px;
+        
+        h2 {
+            margin-left: 0;
+            margin-bottom: 15px;
+            position: static;
+            cursor: default;
+        }
+    
+        h3 {
+            color: #888;
+            text-align: right;
+            width: 112px;
+            font-weight: normal;
+            position: absolute;
+            margin-top: -14px;
+            cursor: default;
+        }
     }
+}
     
 .spyglass-dropdown {
     border-top: 1px solid #ccc;
@@ -222,7 +237,8 @@ body.create-session-page {
     border-bottom: none;
     font-size: 16px;
     padding: 0.4em 10px 0.3em 10px;
-    background: #f1f1f1 url('../img/dropdown-arrows.gif') 97px center no-repeat;
+    /* TODO: can LESS use relative URLs? */
+    background: #f1f1f1 url(/static/img/dropdown-arrows.gif) 97px center no-repeat;
     position: relative;
     cursor: pointer;
     width: 90px;
@@ -230,24 +246,19 @@ body.create-session-page {
     display: inline-block;
     text-align: right;
     float: left;
-}
-
-    .spyglass-dropdown:hover {
-        background-color: #ddd;
-    }
     
-    .spyglass-dropdown .option {
+    .option {
         display: none;
         font-size: 16px;
         padding: 6px 10px 4px 10px;
         background: #f1f1f1;
     }
     
-    .spyglass-dropdown .option:hover {
+    .option:hover {
         background: #ddd;
     }
     
-    .spyglass-dropdown .option-container {
+    .option-container {
         position: absolute;
         top: -1px;
         left: -1px;
@@ -257,6 +268,11 @@ body.create-session-page {
         border-bottom: 1px solid #999;
         border-right: 1px solid #999;
     }
+}
+
+.spyglass-dropdown:hover {
+    background-color: #ddd;
+}
 
 .https-warning {
     position: absolute;
@@ -266,26 +282,21 @@ body.create-session-page {
     font-size: 14px;
 }
 
-.centered-content h3 {
-    font-size: 130%;
-    color: #444;
-    margin-bottom: 15px;
-    border-bottom: 1px solid #ddd;
-}
-
 .session-link {
     margin-bottom: 15px;
-}
 
-    .session-link a {
+    a {
         text-decoration: none;
     }
     
-    .session-link .error {
+    .error {
         color: #f00;
     }
+}
 
 /* Fonts */
+
+@code-font: Monaco, 'Courier New', 'DejaVu Sans Mono', 'Bitstream Vera Sans Mono', monospace;
 
 html,
 .https-warning,
@@ -294,12 +305,13 @@ html,
 }
 
 .session-listing p {
-    font-family: Monaco, 'Courier New', 'DejaVu Sans Mono', 'Bitstream Vera Sans Mono', monospace;
+    font-family: @code-font;
 }
 
 .code-listing .data,
+.code-listing .linenos,
 .followed-redirect,
 .http-error,
 .session-link a {
-    font-family: 'Bitstream Vera Sans Mono', Courier, monospace;
+    font-family: @code-font;
 }

@@ -33,14 +33,10 @@ function setupAutoReloadingSessionPage() {
 
         $.getJSON(url, function(data) {
         
-            console.log("Got JSON:")
-            console.log(data)
-        
             if(data.complete === 'true') {
-                console.log("Request finished in background");
                 
                 if(data.error) {
-                    console.log("Request had error: %d", data.error)
+                    console.log("spyglass: Request had error: %d", data.error)
                     var error_msg = $(document.createElement('p'));
                     error_msg.text('Error: ' + data.error);
                     error_msg.addClass('http-error');
@@ -52,7 +48,6 @@ function setupAutoReloadingSessionPage() {
                         ' <abbr title="milliseconds">ms</abbr>')
                 }
             } else {
-                console.warn("TODO: retry again later");
                 setTimeout(checkWithServer, 1000);
             }
         });    
@@ -122,7 +117,7 @@ function setupDropdown(select) {
     
     var container = $(document.createElement('div'));
     container.addClass('option-container');
-    container.hide();
+    container.css('display', 'none');
     
     var dropdown = $(document.createElement('div'));
     dropdown.addClass('spyglass-dropdown');
@@ -199,5 +194,10 @@ function warnAboutNoHttps(event) {
         warning.show();
     } else {
         warning.hide();
+    }
+    
+    if(input.val().indexOf("http://http://") === 0) {
+        console.info("spyglass: removing double http://");
+        input.val(input.val().substr(7));
     }
 }

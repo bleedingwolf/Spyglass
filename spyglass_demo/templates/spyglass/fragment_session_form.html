@@ -4,12 +4,12 @@
     {{ form.method }} 
     <div class="url-input-wrapper">{{ form.url }}</div>
     <button type="submit">Send Request</button>
-    <div style="clear: both; background: red;"></div>
+    <div class="clear"></div>
 </div></div>
 {% endspaceless %}
 
 <div class="under-input hidden-at-page-load">{{ form.follow_redirects }} {{ form.follow_redirects.label_tag }}
     <a href="#">Advanced Options</a>
-    <span class="spacer" style="width: 443px; display: inline-block;">&nbsp;</span>
+    <span class="spacer">&nbsp;</span>
     <a href="{% url spyglass.views.session_list %}">Recent Requests</a>
 </div>
