@@ -19,6 +19,16 @@ $(document).ready( function() {
     setSelectionRange($('#create-session-header-form .url-input')[0], url_value.length, url_value.length);
     
     setupAutoReloadingSessionPage();
+    
+    $('.advanced-form-toggle').click( function(e) {
+        var current_text = $(this).text();
+        if(current_text == 'Advanced Options')
+            $(this).text('Basic Options');
+        else
+            $(this).text('Advanced Options');
+        $('.advanced-options').toggle();
+        e.preventDefault();
+    })
 });
 
 function setupAutoReloadingSessionPage() {

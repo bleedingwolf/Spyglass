@@ -173,13 +173,31 @@ html, body, div, table, tr, td, pre, code, p, h1, h2, h3, h4, h5, h6, abbr, labe
     .under-input {
         margin-left: 110px;    
         margin-top: 10px;
+        position: relative;
     
         label {
             font-size: 14px;
         }
         
-        .spacer {
-            width: 443px; display: inline-block;
+        .recent-requests-link {
+            position: absolute;
+            left: 683px;
+        }
+    }
+    
+    .advanced-options {
+        padding-top: 15px;
+        
+        label {
+            vertical-align: top;
+            font-size: 100%;
+            font-weight: bold;
+        }
+        
+        textarea {
+            margin-top: 4px;
+            width: 794px;
+            height: 50px;
         }
     }
 
@@ -315,6 +333,10 @@ html,
 }
 
 .session-listing p {
+    font-family: @code-font;
+}
+
+.advanced-options textarea {
     font-family: @code-font;
 }
 

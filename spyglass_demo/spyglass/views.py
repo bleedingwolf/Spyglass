@@ -22,6 +22,11 @@ def homepage(request):
 
 def create_session(request):
     
+    if request.GET.get('advanced', 'no') == 'yes':
+        advanced = True
+    else:
+        advanced = False
+    
     if request.method == "POST":
     
         f = HttpSessionForm(request.POST)
@@ -44,6 +49,7 @@ def create_session(request):
     
     context = {
         'form': f,
+        'use_advanced_form': advanced,
     }
     
     return render_to_response('spyglass/create_session.html', context, context_instance=RequestContext(request))
@@ -111,10 +117,12 @@ def session_detail(request, session_id):
         pretty_response = render_to_string('spyglass/fragment_loading_placeholder.html', {'session_id': session.id})
         elapsed_milliseconds = None
     
+    use_advanced_form = len(session.http_body) != 0
     form_values = {
         'url': session.http_url,
         'follow_redirects': session.follow_redirects,
         'method': session.http_method,
+        'body': session.http_body
     }
     form = HttpSessionForm(form_values)
         
@@ -125,7 +133,8 @@ def session_detail(request, session_id):
         'request_linenos': html_line_numbers(pretty_request),
         'response_linenos': html_line_numbers(pretty_response),
         'elapsed_milliseconds': elapsed_milliseconds,
-        'form': form
+        'form': form,
+        'use_advanced_form': use_advanced_form,
     }
     
     return render_to_response('spyglass/session_detail.html', context, context_instance=RequestContext(request))    

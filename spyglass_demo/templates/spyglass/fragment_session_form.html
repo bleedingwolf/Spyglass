@@ -8,8 +8,19 @@
 </div></div>
 {% endspaceless %}
 
-<div class="under-input hidden-at-page-load">{{ form.follow_redirects }} {{ form.follow_redirects.label_tag }}
-    <a href="#">Advanced Options</a>
-    <span class="spacer">&nbsp;</span>
-    <a href="{% url spyglass.views.session_list %}">Recent Requests</a>
+<div class="under-input {% if not use_advanced_form %}hidden-at-page-load{% endif %}">
+    {{ form.follow_redirects }} {{ form.follow_redirects.label_tag }}
+
+    {% if not use_advanced_form %}
+        <a href="{% url spyglass.views.create_session %}?advanced=yes" class="advanced-form-toggle">Advanced Options</a>
+    {% else %}
+        <a href="{% url spyglass.views.create_session %}" class="advanced-form-toggle">Basic Options</a>
+    {% endif %}
+
+    <a href="{% url spyglass.views.session_list %}" class="recent-requests-link">Recent Requests</a>
+    
+    
+        <div class="advanced-options"{% if not use_advanced_form %} style="display: none;"{% endif %}>
+            <label for="id_body">Request Body</label> {{ form.body }}
+        </div>
 </div>
