@@ -23,7 +23,9 @@
 </div>
 
 {% for redirect in session.httpredirect_set.all %}
-<p class="followed-redirect">redirected to {{ redirect.url }}</p>
+<p class="followed-redirect">
+    <img src="{{ MEDIA_URL}}img/server_go.png" alt="" />
+    redirected to {{ redirect.url }}</p>
 {% endfor %}
 
 {% if not session.http_error %}
@@ -39,7 +41,9 @@
     </div>
 </div>
 {% else %}
-    <p class="http-error">Error: {{ session.get_http_error_display }}</p>
+    <p class="http-error">
+        <img src="{{ MEDIA_URL}}img/exclamation.png" alt="" />
+        Error: {{ session.get_http_error_display }}</p>
 {% endif %}
 
 {% endblock content %}

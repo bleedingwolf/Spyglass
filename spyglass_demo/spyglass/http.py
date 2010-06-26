@@ -1,5 +1,6 @@
 
 from urlparse import urlparse
+import socket
 
 try:
     from cStringIO import StringIO
@@ -26,8 +27,8 @@ class HttpRequestor(object):
         
         self.raw_response = ''
     
-    def start_request(self, socket):
-        self.socket = socket
+    def start_request(self, sock):
+        self.socket = sock
         
         hostname, port, raw_request = self.request_info()
         self.logger.info("Opening socket to %s:%s..." % (hostname, port))
@@ -35,15 +36,15 @@ class HttpRequestor(object):
         try:
             self.socket.connect((hostname, port))
         except socket.gaierror:
-            logger.error("unknown host: %s" % hostname)
-            session.http_error = 1 # TODO: make this some kind of enum
-            session.save()
+            self.logger.error("unknown host: %s" % hostname)
+            self.session.http_error = 1 # TODO: make this some kind of enum
+            self.session.save()
             return False
         except socket.error, msg:
-            logger.error("socket error")
-            logger.error(msg)
-            session.http_error = 2 # TODO: make this some kind of enum
-            session.save()
+            self.logger.error("socket error")
+            self.logger.error(msg)
+            self.session.http_error = 2 # TODO: make this some kind of enum
+            self.session.save()
             return False
 
         self.socket.sendall(raw_request)
