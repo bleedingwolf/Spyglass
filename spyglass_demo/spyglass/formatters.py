@@ -2,6 +2,8 @@
 from django.template.defaultfilters import force_escape
 
 import json
+from xml.dom.minidom import parseString
+
 from pygments import highlight
 from pygments.formatters import HtmlFormatter as PygmentsHtmlFormatter
 from pygments.lexers import guess_lexer, JavascriptLexer
@@ -46,21 +48,30 @@ class HtmlFormatter(object):
         return pretty_headers + separator + pretty_body
     
     def _format_body(self, response_body):
-        try:
-            tmp = json.loads(response_body)
-            response_body = json.dumps(tmp, indent=4)
+        if not response_body:
+            return ''
         
-            lexer = JavascriptLexer() # guess_lexer(response_body)
-            formatter = PygmentsHtmlFormatter(nowrap=True)
-            pretty_response_body = highlight(response_body, lexer, formatter)
-        except ValueError:
-            # response_body is not JSON
-            lexer = guess_lexer(response_body)
-            formatter = PygmentsHtmlFormatter(nowrap=True)
-            pretty_response_body = highlight(response_body, lexer, formatter)
+        try:
+            pretty_response_body = self.__format_xml(response_body)
+        except Exception, ex:
+            try:
+                pretty_response_body = self.__format_json(response_body)
+            except ValueError, ex2:
+                pretty_response_body = response_body
+    
+        lexer = guess_lexer(pretty_response_body)
+        formatter = PygmentsHtmlFormatter(nowrap=True)
+        pretty_response_body = highlight(pretty_response_body, lexer, formatter)
             
         return pretty_response_body
     
+    def __format_json(self, text):
+        tmp = json.loads(text)
+        return json.dumps(tmp, indent=4)
+    
+    def __format_xml(self, text):
+        dom_document = parseString(text)
+        return dom_document.toprettyxml(indent='  ')
 
 
 def separate_headers_and_body(raw_text):

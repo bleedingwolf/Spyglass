@@ -28,6 +28,7 @@ class HttpSession(models.Model):
     HTTP_ERROR_CHOICES = (
         (0, 'No Error'),
         (1, 'Unknown Host'),
+        (2, 'Unspecified Socket Error'),
     )
 
     time_requested = models.DateTimeField(auto_now_add=True)
