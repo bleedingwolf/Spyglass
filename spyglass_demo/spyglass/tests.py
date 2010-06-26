@@ -240,6 +240,17 @@ class HttpRequestorTest(TestCase):
         response = self.requestor.raw_response
         
         self.failUnlessEqual(response, 'NotQuiteEnough')
+        
+    def test_reading_response_with_no_content_length(self):
+        sock = MockSocket(response_data='HTTP/1.0 200 OK\r\nServer: nginx\r\nDate: Sat, 26 Jun 2010 04:03:37 GMT\r\n\r\nThis content has no specified length.')
+
+        self.requestor.start_request(sock)
+        self.requestor.read_response_headers()
+        self.requestor.read_body()
+        
+        response = self.requestor.raw_response
+        
+        self.failUnlessEqual(response, 'This content has no specified length.')
     
     # TODO: more tests
     #   - test chunked response body

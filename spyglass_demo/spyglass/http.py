@@ -125,8 +125,8 @@ class HttpRequestor(object):
                 self.logger.warning("unable to parse Content-Length header: %s" % content_length)
                 return
         else:
-            # FIXME: what to do in this situtation? consult the RFC
-            self.logger.error("Unknown transfer type!")
+            self.logger.warning("No Content-Length or Transfer-Encoding specified.")
+            self.__read_body_until_socket_closes()
             return
     
         if content_encoding == 'gzip':
@@ -157,6 +157,12 @@ class HttpRequestor(object):
         self.logger.info("Got response with content-length %s" % length)
         data = self.socket_file.read(length)
         self.raw_response += data
+        
+    def __read_body_until_socket_closes(self):
+        buf = 'buffer'
+        while len(buf):
+            buf = self.socket_file.read(128)
+            self.raw_response += buf
         
     def __decompress_gzipped_body(self):
         self.logger.info("Received GZIP-compressed response")
