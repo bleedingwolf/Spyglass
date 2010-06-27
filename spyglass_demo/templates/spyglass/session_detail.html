@@ -4,7 +4,8 @@
 
 {% block content %}
 <div class="request session-listing">
-    <p>Request <span class="datetime"> for {{ session.http_url }} sent {{ session.time_requested }}</span>
+    <p>{% if session.is_https %}<img src="{{ MEDIA_URL }}img/lock.png" alt="" />{% endif %}
+        Request <span class="datetime"> for {{ session.http_url }} sent {{ session.time_requested }}</span>
         <span class="actions">
             <a href="./{{session.id}}/resend">resend</a>
             {% if user.is_authenticated and user.is_staff %}

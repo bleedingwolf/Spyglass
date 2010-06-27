@@ -83,6 +83,9 @@ class HttpSession(models.Model):
         list_of_dicts = [{'name': n.strip(), 'value': v.strip()} for n, v in split_headers]
         return list_of_dicts
     
+    def is_https(self):
+        return self.http_url.startswith('https')
+    
     class Meta:
         verbose_name = 'HTTP session'
 

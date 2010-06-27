@@ -20,8 +20,6 @@ function setupHttpSessionForm() {
     
     fixHowStupidGeckoIs();
     
-    $('input.url-input').keyup(warnAboutNoHttps);
-    
     var url_value = $('#create-session-header-form .url-input').val();
     setSelectionRange($('#create-session-header-form .url-input')[0], url_value.length, url_value.length);
     
@@ -205,31 +203,4 @@ function setupDropdown(select) {
         $(document).bind('click', dropdownWasDefocused);
     });
     
-}
-
-function warnAboutNoHttps(event) {
-    var input = $(this);
-    var warning = $('.https-warning');
-    if(warning.size() == 0) {
-        
-        warning = $(document.createElement('div')).addClass('https-warning');
-        var offset = input.offset();
-        offset.top += (input.height() + 12);
-        offset.left += 1;
-        warning.css(offset);
-        warning.text("Sorry, Spyglass doesn't support HTTPS requests yet.");
-        
-        $('body').append(warning);
-    }
-    
-    if(input.val().indexOf("https") === 0) {
-        warning.show();
-    } else {
-        warning.hide();
-    }
-    
-    if(input.val().indexOf("http://http://") === 0) {
-        console.info("spyglass: removing double http://");
-        input.val(input.val().substr(7));
-    }
 }

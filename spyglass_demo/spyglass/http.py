@@ -1,6 +1,7 @@
 
 from urlparse import urlparse
 import socket
+import ssl
 
 try:
     from cStringIO import StringIO
@@ -62,7 +63,9 @@ class HttpRequestor(object):
         if parsed_url.scheme == 'http':
             default_port = 80
         elif parsed_url.scheme == 'https':
-            logger.warning("Request is over HTTPS! (maybe not yet implemented)")
+            self.logger.warning("Request is over HTTPS! (maybe not yet implemented)")
+            if self.socket:
+                self.socket = ssl.wrap_socket(self.socket)
             default_port = 443
             
         port = parsed_url.port or default_port
