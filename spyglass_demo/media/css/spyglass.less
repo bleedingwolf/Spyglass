@@ -192,6 +192,20 @@ html, body, div, table, tr, td, pre, code, p, h1, h2, h3, h4, h5, h6, abbr, labe
     .advanced-options {
         padding-top: 15px;
         
+        .extra-headers {
+            td {
+                width: 30%;
+            }
+            input {
+                padding: 2px;
+                width: 90%;
+            }
+        }
+        
+        .add-extra-header-link {
+            padding-bottom: 15px;
+        }
+        
         label {
             vertical-align: top;
             font-size: 100%;
@@ -340,7 +354,8 @@ html,
     font-family: @code-font;
 }
 
-.advanced-options textarea {
+.advanced-options textarea,
+.advanced-options .extra-headers input {
     font-family: @code-font;
 }
 

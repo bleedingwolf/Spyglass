@@ -11,13 +11,13 @@ from django.http import HttpResponse
 from spyglass.models import HttpSession
 from spyglass.backend import run_session, session_is_ready
 from spyglass.formatters import HtmlFormatter, html_line_numbers
-from spyglass.forms import HttpSessionForm
+from spyglass.forms import session_and_headers_form
 
 
 def homepage(request):
 
-    f = HttpSessionForm()
-    context = {'form': f}
+    session_form, headers_form = session_and_headers_form()
+    context = {'form': session_form, 'http_header_form': headers_form}
     return render_to_response('spyglass/create_session.html', context, context_instance=RequestContext(request))
 
 def create_session(request):
@@ -29,10 +29,17 @@ def create_session(request):
     
     if request.method == "POST":
     
-        f = HttpSessionForm(request.POST)
+        f, header_formset = session_and_headers_form(request.POST)
+        
         if f.is_valid():
+        
+            header_text = ''
+            if header_formset.is_valid():
+                header_text = '\r\n'.join([x.formatted_header() for x in header_formset.forms if x.formatted_header()])
+                
             s = HttpSession(http_method=f.cleaned_data['method'],
                 http_url=f.cleaned_data['url'],
+                http_headers=header_text,
                 follow_redirects=f.cleaned_data['follow_redirects'],
                 http_body=f.cleaned_data['body'])
             s.save()
@@ -45,10 +52,11 @@ def create_session(request):
         else:
             print " [WARN] submitted form was invalid: " + str(f.errors)
     else:
-        f = HttpSessionForm()
+        f, header_formset = session_and_headers_form()
     
     context = {
         'form': f,
+        'http_header_form': header_formset,
         'use_advanced_form': advanced,
     }
     
@@ -70,9 +78,11 @@ def session_resend(request, session_id):
 
 def session_list(request):
     all_sessions = HttpSession.objects.all().order_by('-time_requested')
+    form, header_form = session_and_headers_form()
     context = {
         'session_list': all_sessions,
-        'form': HttpSessionForm()
+        'form': form,
+        'http_header_form': header_form,
     }
     return render_to_response('spyglass/session_list.html', context, context_instance=RequestContext(request))
 
@@ -117,14 +127,8 @@ def session_detail(request, session_id):
         pretty_response = render_to_string('spyglass/fragment_loading_placeholder.html', {'session_id': session.id})
         elapsed_milliseconds = None
     
-    use_advanced_form = len(session.http_body) != 0
-    form_values = {
-        'url': session.http_url,
-        'follow_redirects': session.follow_redirects,
-        'method': session.http_method,
-        'body': session.http_body
-    }
-    form = HttpSessionForm(form_values)
+    use_advanced_form = (len(session.http_body) != 0) or (len(session.http_headers) != 0)
+    form, http_header_form = session_and_headers_form(session=session)
         
     context = {
         'session': session,
@@ -134,6 +138,7 @@ def session_detail(request, session_id):
         'response_linenos': html_line_numbers(pretty_response),
         'elapsed_milliseconds': elapsed_milliseconds,
         'form': form,
+        'http_header_form': http_header_form,
         'use_advanced_form': use_advanced_form,
     }
     

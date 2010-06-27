@@ -2,6 +2,18 @@
 var mouse_coords = null;
 
 $(document).ready( function() {
+    setupHttpSessionForm();
+    
+    if($('body').hasClass('create-session-page')) {
+        $('.hidden-at-page-load').hide();
+        $('html').mousemove(fadeInOtherControls);
+    }
+    
+    setupAutoReloadingSessionPage();
+
+});
+
+function setupHttpSessionForm() {
     $('select.spyglass-dropdown').each( function(idx, el) {
         setupDropdown($(el));
     });
@@ -10,15 +22,25 @@ $(document).ready( function() {
     
     $('input.url-input').keyup(warnAboutNoHttps);
     
-    if($('body').hasClass('create-session-page')) {
-        $('.hidden-at-page-load').hide();
-        $('html').mousemove(fadeInOtherControls);
-    }
-    
     var url_value = $('#create-session-header-form .url-input').val();
     setSelectionRange($('#create-session-header-form .url-input')[0], url_value.length, url_value.length);
     
-    setupAutoReloadingSessionPage();
+    $('.advanced-options table.extra-headers').after('<p class="add-extra-header-link"><a href="#">add another</a></p>');
+    $('.advanced-options .add-extra-header-link').click( function(e) {
+        e.preventDefault();
+        
+        var current_form_count = $('#id_header-TOTAL_FORMS').val();
+        current_form_count++;
+    
+        const TEMPLATE = '<tr><td><input type="text" name="header-__prefix__-name" id="id_header-__prefix__-name" /></td><td><input type="text" name="header-__prefix__-value" id="id_header-__prefix__-value" /></td></tr>';
+        var row_html = TEMPLATE.replace(/__prefix__/g, current_form_count);
+        
+        $('#id_header-TOTAL_FORMS').val(current_form_count);
+        
+        var table = $('table.extra-headers');
+        console.log(table);
+        table.append(row_html);
+    })
     
     $('.advanced-form-toggle').click( function(e) {
         var current_text = $(this).text();
@@ -29,7 +51,7 @@ $(document).ready( function() {
         $('.advanced-options').toggle();
         e.preventDefault();
     })
-});
+}
 
 function setupAutoReloadingSessionPage() {
     

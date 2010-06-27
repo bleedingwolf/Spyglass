@@ -84,6 +84,24 @@ class HttpSessionTest(TestCase):
                 
         self.failUnlessEqual(s.get_raw_request(), expected_request)
 
+    def test_raw_request_with_extra_headers(self):
+        headers = '\r\n'.join([
+            'User-Agent: Spyglass/0.1',
+            'Referer: http://localhost:9000/login.jsp'
+        ])
+        s = HttpSession(http_method='GET', http_url='http://localhost:9000/endpoint', http_headers=headers)
+        
+        expected_request = '\r\n'.join([
+            'GET /endpoint HTTP/1.1',
+            'Host: localhost',
+            'Accept: */*',
+            'User-Agent: Spyglass/0.1',
+            'Referer: http://localhost:9000/login.jsp',
+            '',
+            '',
+        ])
+                
+        self.failUnlessEqual(s.get_raw_request(), expected_request)
 
 class PrettifySessionTest(TestCase):
 
