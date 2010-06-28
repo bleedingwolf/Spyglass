@@ -1,6 +1,6 @@
 
 import datetime
-import json
+import django.utils.simplejson as json
 
 from django.shortcuts import render_to_response, redirect, get_object_or_404
 from django.template import RequestContext

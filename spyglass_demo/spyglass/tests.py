@@ -274,4 +274,43 @@ class HttpRequestorTest(TestCase):
     #   - test chunked response body
     #   - test gzipped response data
     #   - test multi-line headers
+    
+    
+from spyglass.formatters import prettify_xml
+    
+class PrettifyXMLTest(TestCase):
+
+    def test_really_simple_xml(self):
+        xml = '<xml></xml>'
+        pretty_xml = prettify_xml(xml)
         
+        self.assertEquals('<xml>\n</xml>', pretty_xml)
+    
+    def test_intermediate_xml(self):
+        xml = '<root><child><sub-child>Foo</sub-child><sub-child>Bar</sub-child></child></root>'
+        pretty_xml = prettify_xml(xml)
+        expected_xml = '\n'.join([
+            '<root>',
+            '  <child>',
+            '    <sub-child>Foo</sub-child>',
+            '    <sub-child>Bar</sub-child>',
+            '  </child>',
+            '</root>'
+        ])
+        
+        self.assertEquals(pretty_xml, expected_xml)
+    
+    def test_ignores_xml_prefix(self):
+        xml = '<?xml version="1.0"?><root><child><sub-child>Foo</sub-child><sub-child>Bar</sub-child></child></root>'
+        pretty_xml = prettify_xml(xml)
+        expected_xml = '\n'.join([
+            '<?xml version="1.0"?>',
+            '<root>',
+            '  <child>',
+            '    <sub-child>Foo</sub-child>',
+            '    <sub-child>Bar</sub-child>',
+            '  </child>',
+            '</root>'
+        ])
+        
+        self.assertEquals(pretty_xml, expected_xml)        

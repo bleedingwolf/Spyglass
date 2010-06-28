@@ -1,8 +1,7 @@
 
 from django.template.defaultfilters import force_escape
 
-import json
-from xml.dom.minidom import parseString
+import django.utils.simplejson as json
 
 from pygments import highlight
 from pygments.formatters import HtmlFormatter as PygmentsHtmlFormatter
@@ -51,14 +50,17 @@ class HtmlFormatter(object):
         if not response_body:
             return ''
         
-        try:
+        # TODO: detect XML more exactly
+        pretty_response_body = response_body
+        if '<?xml' in response_body:
             pretty_response_body = self.__format_xml(response_body)
-        except Exception, ex:
+        else:
+            # possibly JSON?
             try:
                 pretty_response_body = self.__format_json(response_body)
             except ValueError, ex2:
-                pretty_response_body = response_body
-    
+                pass
+
         lexer = guess_lexer(pretty_response_body)
         formatter = PygmentsHtmlFormatter(nowrap=True)
         pretty_response_body = highlight(pretty_response_body, lexer, formatter)
@@ -70,9 +72,41 @@ class HtmlFormatter(object):
         return json.dumps(tmp, indent=4)
     
     def __format_xml(self, text):
-        dom_document = parseString(text)
-        return dom_document.toprettyxml(indent='  ')
+        return prettify_xml(text)
 
+def prettify_xml(text):
+    
+    indent = '  ' # two spaces
+    level = 0
+    pretty_xml = ''
+    
+    in_prefix = False
+    prev_non_whitespace = ''
+    
+    for idx in range(0, len(text)):
+    
+        if idx < len(text) and text[idx:idx+2] == '<?':
+            in_prefix = True
+    
+        if idx < len(text) and text[idx:idx+2] == '</':
+            level -= 1
+
+        if text[idx] == '<' and prev_non_whitespace == '>':
+            pretty_xml += '\n'
+            if not in_prefix:
+                pretty_xml += (indent * level)
+            in_prefix = False
+            
+        if idx < len(text) and text[idx] == '<' and text[idx+1] != '/':
+            if not in_prefix:
+                level += 1 
+            
+        pretty_xml += text[idx]
+        
+        if not text[idx].isspace():
+            prev_non_whitespace = text[idx] 
+        
+    return pretty_xml
 
 def separate_headers_and_body(raw_text):
 
