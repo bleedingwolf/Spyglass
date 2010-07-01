@@ -12,8 +12,6 @@ function setupHttpSessionForm() {
         setupDropdown($(el));
     });
     
-    fixHowStupidGeckoIs();
-    
     var url_value = $('#create-session-header-form .url-input').val();
     setSelectionRange($('#create-session-header-form .url-input')[0], url_value.length, url_value.length);
     
@@ -95,22 +93,6 @@ function setSelectionRange(textElem, selectionStart, selectionEnd) {
         range.moveEnd('character', selectionEnd);
         range.moveStart('character', selectionStart);
         range.select();
-    }
-}
-
-
-function fixHowStupidGeckoIs() {
-
-    var increaseByPixels = function(elem, prop, px) {
-        var current = elem.css(prop);
-        current = current.replace('px', '');
-        var fixed = (parseInt(current) + px) + 'px';
-        elem.css(prop, fixed);    
-    }
-
-    if($.browser.mozilla) {
-        increaseByPixels($('.form-bar-wrapper button'), 'padding-top', 1);
-        increaseByPixels($('.form-bar-wrapper button'), 'padding-bottom', 1);
     }
 }
 
