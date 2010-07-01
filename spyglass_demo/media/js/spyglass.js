@@ -117,7 +117,7 @@ function fixHowStupidGeckoIs() {
 function setupPageFadeIn() {
 
     $('body.create-session-page #create-session-header-form h3').addClass('hidden-at-page-load');
-    $('body.create-session-page #create-session-header-form .under-input').addClass('hidden-at-page-load');
+    $('body.create-session-page #create-session-header-form .under-input:not(.advanced)').addClass('hidden-at-page-load');
 
     $('.hidden-at-page-load').hide();
     $('html').mousemove(fadeInOtherControls);

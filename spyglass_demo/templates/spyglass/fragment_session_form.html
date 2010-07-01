@@ -8,7 +8,7 @@
 </div></div>
 {% endspaceless %}
 
-<div class="under-input">
+<div class="under-input {% if use_advanced_form %}advanced{% endif %}">
     {{ form.follow_redirects }} {{ form.follow_redirects.label_tag }}
 
     {% if not use_advanced_form %}
