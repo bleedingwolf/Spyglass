@@ -3,14 +3,8 @@ var mouse_coords = null;
 
 $(document).ready( function() {
     setupHttpSessionForm();
-    
-    if($('body').hasClass('create-session-page')) {
-        $('.hidden-at-page-load').hide();
-        $('html').mousemove(fadeInOtherControls);
-    }
-    
+    setupPageFadeIn();
     setupAutoReloadingSessionPage();
-
 });
 
 function setupHttpSessionForm() {
@@ -118,6 +112,15 @@ function fixHowStupidGeckoIs() {
         increaseByPixels($('.form-bar-wrapper button'), 'padding-top', 1);
         increaseByPixels($('.form-bar-wrapper button'), 'padding-bottom', 1);
     }
+}
+
+function setupPageFadeIn() {
+
+    $('body.create-session-page #create-session-header-form h3').addClass('hidden-at-page-load');
+    $('body.create-session-page #create-session-header-form .under-input').addClass('hidden-at-page-load');
+
+    $('.hidden-at-page-load').hide();
+    $('html').mousemove(fadeInOtherControls);
 }
 
 function fadeInOtherControls(event) {

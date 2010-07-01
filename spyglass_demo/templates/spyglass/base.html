@@ -1,0 +1,44 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+<head>
+
+    <link rel='stylesheet' type='text/css' href='{{ MEDIA_URL }}css/reset.css' />
+    <link rel='stylesheet' type='text/css' href='{{ MEDIA_URL }}css/pygments.css' />
+    <link rel='stylesheet/less' type='text/css' href='{{ MEDIA_URL }}css/spyglass.less' />
+    <script type="text/javascript" src="{{ MEDIA_URL }}js/jquery-1.2.1.min.js"></script>
+    <script type="text/javascript" src="{{ MEDIA_URL }}js/less-1.0.21.min.js"></script>
+    <script type="text/javascript" src="{{ MEDIA_URL }}js/spyglass.js?2010-07-01"></script>
+
+    <title>{% block title %}Spyglass{% endblock %}</title>
+    
+    <!-- 
+    
+       _____                   __                
+      / ___/____  __  ______ _/ /____ ___________
+      \__ \/ __ \/ / / / __ `/ // __ `/ ___/ ___/
+     ___/ / /_/ / /_/ / /_/ / // /_/ (__  |__  ) 
+    /____/ .___/\__, /\__, /_/ \__,_/____/____/  
+        /_/    /____//____/                      
+
+    -->
+    
+</head>
+{% block body_tag %}<body>{% endblock %}
+
+{% block header %}
+<div id="common-header">
+
+    <div id="create-session-header-form">
+        <h2><a href="{% url spyglass.views.homepage %}">Spyglass</a></h2>
+        <form method="post" action="{% url spyglass.views.create_session %}">
+            {% include "spyglass/fragment_session_form.html" %}            
+        </form>
+    </div>
+
+</div>
+{% endblock header %}
+
+{% block content %}{% endblock %}
+
+</body>
+</html>

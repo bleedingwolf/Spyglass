@@ -1,18 +1,9 @@
-<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
-<html>
-<head>
+{% extends 'spyglass/base.html' %}
 
-    <link rel='stylesheet' type='text/css' href='{{ MEDIA_URL }}css/reset.css' />
-    <link rel='stylesheet/less' type='text/css' href='{{ MEDIA_URL }}css/spyglass.less' />
-    <script type="text/javascript" src="{{ MEDIA_URL }}js/jquery-1.2.1.min.js"></script>
-    <script type="text/javascript" src="{{ MEDIA_URL }}js/spyglass.js"></script>
-    <script type="text/javascript" src="{{ MEDIA_URL }}js/less-1.0.21.min.js"></script>
+{% block body_tag %}<body class="create-session-page">{% endblock %}
 
-    <title>Spyglass</title>
+{% block header %}
 
-</head>
-<body class="create-session-page">
-    
     <div id="create-session-header-form">
     
         <h3 class="hidden-at-page-load">an http client</h3>
@@ -24,6 +15,5 @@
 
         </form>
     </div>
-
-</body>
-</html>
+    
+{% endblock header %}

@@ -8,30 +8,29 @@
 </div></div>
 {% endspaceless %}
 
-<div class="under-input {% if not use_advanced_form %}hidden-at-page-load{% endif %}">
+<div class="under-input">
     {{ form.follow_redirects }} {{ form.follow_redirects.label_tag }}
 
     {% if not use_advanced_form %}
-        <a href="{% url spyglass.views.create_session %}?advanced=yes" class="advanced-form-toggle">Advanced Options</a>
+    <a href="{% url spyglass.views.create_session %}?advanced=yes" class="advanced-form-toggle">Advanced Options</a>
     {% else %}
-        <a href="{% url spyglass.views.create_session %}" class="advanced-form-toggle">Basic Options</a>
+    <a href="{% url spyglass.views.create_session %}" class="advanced-form-toggle">Basic Options</a>
     {% endif %}
 
     <a href="{% url spyglass.views.session_list %}" class="recent-requests-link">Recent Requests</a>
     
-    
-        <div class="advanced-options"{% if not use_advanced_form %} style="display: none;"{% endif %}>
-            <label>Extra Headers</label>
-            {{ http_header_form.management_form }}
-            
-            <table class='extra-headers'>
-            {% for form in http_header_form.forms %}
-            <tr>
-                <td>{{ form.name }}</td> <td>{{ form.value }}</td>
-            </tr>
-            {% endfor %}
-            </table>
-            
-            <label for="id_body">Request Body</label> {{ form.body }}
-        </div>
+    <div class="advanced-options"{% if not use_advanced_form %} style="display: none;"{% endif %}>
+        <label>Extra Headers</label>
+        {{ http_header_form.management_form }}
+        
+        <table class='extra-headers'>
+        {% for form in http_header_form.forms %}
+        <tr>
+            <td>{{ form.name }}</td> <td>{{ form.value }}</td>
+        </tr>
+        {% endfor %}
+        </table>
+        
+        <label for="id_body">Request Body</label> {{ form.body }}
+    </div>
 </div>
