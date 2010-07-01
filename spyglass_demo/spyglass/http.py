@@ -63,7 +63,6 @@ class HttpRequestor(object):
         if parsed_url.scheme == 'http':
             default_port = 80
         elif parsed_url.scheme == 'https':
-            self.logger.warning("Request is over HTTPS! (maybe not yet implemented)")
             if self.socket:
                 self.socket = ssl.wrap_socket(self.socket)
             default_port = 443
