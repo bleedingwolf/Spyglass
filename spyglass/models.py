@@ -4,20 +4,26 @@ from django.db import models
 from urlparse import urlparse
 
 
-def format_request(method, hostname, path, body='', extra_headers=''):
+def format_request(method, hostname, path, body='', extra_headers=[]):
 
     request_line = '%s %s HTTP/1.1\r\n' % (method, path)
-    headers = 'Host: %s\r\nAccept: */*\r\n' % hostname
+    headers = {
+        'Accept': '*/*'
+    }
 
     if body:
         content_length = len(body)
-        headers += 'Content-Length: %d\r\n' % content_length
+        headers['Content-Length'] = str(content_length)
 
-    headers += extra_headers
-    if not headers[-2:] == '\r\n':
-        headers += '\r\n'
+    for h in extra_headers:
+        headers[h['name'].lower()] = h['value']
     
-    return request_line + headers + '\r\n' + body
+    if not 'host' in headers:
+        headers['Host'] = hostname
+    
+    headers_str = '\r\n'.join(['%s: %s' % (h, v) for h, v in headers.iteritems()]) + '\r\n'
+    
+    return request_line + headers_str + '\r\n' + body
 
 
 class HttpSession(models.Model):
@@ -73,13 +79,13 @@ class HttpSession(models.Model):
             path = path + '?' + qs
         
         hostname = parsed.hostname
-        return format_request(self.http_method, hostname, path, self.http_body, self.http_headers)
+        return format_request(self.http_method, hostname, path, self.http_body, self.header_list())
     
     def header_list(self):
         '''
         Returns a list of dicts representing this request's headers.
         '''
-        split_headers = [h.split(':') for h in self.http_headers.splitlines()]
+        split_headers = [h.split(':', 1) for h in self.http_headers.splitlines()]
         list_of_dicts = [{'name': n.strip(), 'value': v.strip()} for n, v in split_headers]
         return list_of_dicts
     

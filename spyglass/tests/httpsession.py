@@ -1,11 +1,24 @@
 
 import datetime
+from email.parser import HeaderParser
 
 from django.test import TestCase
 from spyglass.models import HttpSession
 
 
 class HttpSessionTest(TestCase):
+
+    def parse_request(self, request):
+        status = request.splitlines()[0]
+        no_status_response = '\n'.join(request.splitlines()[1:])
+        
+        header_parser = HeaderParser()
+        
+        mime_message = header_parser.parsestr(no_status_response)
+        mime_headers = dict(mime_message.items())
+        mime_body = mime_message.get_payload()
+        
+        return status, mime_headers, mime_body      
 
     def test_simple_unicode(self):
 
@@ -73,8 +86,11 @@ class HttpSessionTest(TestCase):
         
         expected_request = '''POST /endpoint HTTP/1.1\r\nHost: localhost\r\n''' + \
             '''Accept: */*\r\nContent-Length: %d\r\n\r\n%s''' % (content_length, body)
-                
-        self.failUnlessEqual(s.get_raw_request(), expected_request)
+         
+        status, mime_headers, mime_body = self.parse_request(s.get_raw_request())
+               
+        self.failUnlessEqual(mime_headers['Content-Length'], str(content_length))
+        self.failUnlessEqual(mime_body, body)
 
     def test_raw_request_with_extra_headers(self):
         headers = '\r\n'.join([
@@ -82,15 +98,24 @@ class HttpSessionTest(TestCase):
             'Referer: http://localhost:9000/login.jsp'
         ])
         s = HttpSession(http_method='GET', http_url='http://localhost:9000/endpoint', http_headers=headers)
+             
+        status, mime_headers, mime_body = self.parse_request(s.get_raw_request())
         
-        expected_request = '\r\n'.join([
-            'GET /endpoint HTTP/1.1',
-            'Host: localhost',
-            'Accept: */*',
+        self.failUnlessEqual(mime_headers['Host'], 'localhost')
+        self.failUnlessEqual(mime_headers['user-agent'], 'Spyglass/0.1')
+        self.failUnlessEqual(mime_headers['referer'], 'http://localhost:9000/login.jsp')
+        
+    def test_raw_request_with_host_headers(self):
+        headers = '\r\n'.join([
             'User-Agent: Spyglass/0.1',
             'Referer: http://localhost:9000/login.jsp',
-            '',
-            '',
+            'Host: google.com',
         ])
-                
-        self.failUnlessEqual(s.get_raw_request(), expected_request)
+        s = HttpSession(http_method='GET', http_url='http://localhost:9000/endpoint', http_headers=headers)
+        
+        # this is a bit of a hack, but using the email parsing library
+        # is way easier and more accurate than comparing strings
+        status, mime_headers, mime_body = self.parse_request(s.get_raw_request())
+        
+        self.assertTrue('host' in mime_headers)
+        self.assertTrue(mime_headers['host'] == 'google.com')
