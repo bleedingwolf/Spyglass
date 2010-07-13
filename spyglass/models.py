@@ -1,7 +1,7 @@
 
 from django.db import models
 
-from urlparse import urlparse
+from urlparse import urlparse, parse_qsl
 from email import message_from_string
 
 
@@ -104,6 +104,10 @@ class HttpSession(models.Model):
         '''
         list_of_dicts = [dict(name=n.strip(), value=v.strip()) for n, v in self.get_request_headers()]
         return list_of_dicts
+    
+    def querystring_params(self):
+        qs = urlparse(self.http_url).query
+        return parse_qsl(qs)
     
     def is_https(self):
         return self.http_url.startswith('https')

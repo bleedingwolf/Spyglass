@@ -21,6 +21,23 @@
         </tr>
     </table>
     </div>
+    {% with session.querystring_params as qs_params %}
+    {% if qs_params %}
+    <div class="code-listing">
+    <table class="parameter-helper">
+    {% for param, value in qs_params %}
+        <tr>
+            {% if forloop.first %}
+            <td class="helper-label" rowspan="{{ qs_params|length }}">URL Parameters:</td>
+            {% endif %}
+            <th>{{ param }}</th>
+            <td>{{ value }}</td>
+        </tr>
+    {% endfor %}
+    </table>
+    {% endif %}
+    </div>
+    {% endwith %}
 </div>
 
 {% for redirect in session.httpredirect_set.all %}

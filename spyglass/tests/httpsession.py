@@ -176,3 +176,12 @@ class HttpSessionTest(TestCase):
         
         self.failUnless('Cache-Control: a' in request)
         self.failUnless('Cache-Control: b' in request)
+    
+    
+    def test_request_querystring(self):
+        s = HttpSession(http_method='GET', http_url='http://localhost:9000/endpoint?q=foo+bar&q=bar&z=qux')
+        querystring_params = s.querystring_params()
+        
+        self.failUnless(('q', 'foo bar') in querystring_params)
+        self.failUnless(('q', 'bar') in querystring_params)
+        self.failUnless(('z', 'qux') in querystring_params)
