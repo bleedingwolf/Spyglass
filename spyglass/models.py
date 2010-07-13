@@ -2,26 +2,37 @@
 from django.db import models
 
 from urlparse import urlparse
+from email.parser import HeaderParser
 
 
 def format_request(method, hostname, path, body='', extra_headers=[]):
-
+    '''
+    extra_headers should be a list of 2-tuples:
+     [
+         ('Content-Type', 'application/json'),
+         ('Host', 'google.com'),
+     ]
+    '''
+    headers = []
     request_line = '%s %s HTTP/1.1\r\n' % (method, path)
-    headers = {
-        'Accept': '*/*'
+    default_headers = {
+        'Accept': '*/*',
+        'Host': hostname
     }
 
     if body:
         content_length = len(body)
-        headers['Content-Length'] = str(content_length)
+        headers.append(('Content-Length', str(content_length)))
 
-    for h in extra_headers:
-        headers[h['name'].lower()] = h['value']
+    for name, value in extra_headers:
+        headers.append((name, value))
+        if(name.title() in default_headers):
+            default_headers.pop(name.title())
     
-    if not 'host' in headers:
-        headers['Host'] = hostname
+    for name, value in default_headers.iteritems():
+        headers.append((name, value))
     
-    headers_str = '\r\n'.join(['%s: %s' % (h, v) for h, v in headers.iteritems()]) + '\r\n'
+    headers_str = '\r\n'.join(['%s: %s' % (h, v) for h, v in headers]) + '\r\n'
     
     return request_line + headers_str + '\r\n' + body
 
@@ -79,14 +90,21 @@ class HttpSession(models.Model):
             path = path + '?' + qs
         
         hostname = parsed.hostname
-        return format_request(self.http_method, hostname, path, self.http_body, self.header_list())
+        return format_request(self.http_method, hostname, path, self.http_body, self.get_request_headers())
+    
+    def get_request_headers(self):
+        '''
+        Returns a list of tuples representing the request's headers.
+        '''
+        parser = HeaderParser()
+        message = parser.parsestr(self.http_headers)
+        return message.items()
     
     def header_list(self):
         '''
         Returns a list of dicts representing this request's headers.
         '''
-        split_headers = [h.split(':', 1) for h in self.http_headers.splitlines()]
-        list_of_dicts = [{'name': n.strip(), 'value': v.strip()} for n, v in split_headers]
+        list_of_dicts = [dict(name=n.strip(), value=v.strip()) for n, v in self.get_request_headers()]
         return list_of_dicts
     
     def is_https(self):

@@ -74,19 +74,20 @@ class HttpSessionTest(TestCase):
 
     def test_raw_request_with_body(self):
     
-        body = '''
+        import textwrap
+    
+        body = textwrap.dedent('''\
             <fake-xml>
                 <key>com.bleedingwolf.PrincipalClass</key>
                 <value>SomeClassName</value>
-            </fake-xml>
-        '''
+            </fake-xml>''')
         content_length = len(body)
         
         s = HttpSession(http_method='POST', http_url='http://localhost:9000/endpoint', http_body=body)
         
         expected_request = '''POST /endpoint HTTP/1.1\r\nHost: localhost\r\n''' + \
             '''Accept: */*\r\nContent-Length: %d\r\n\r\n%s''' % (content_length, body)
-         
+        
         status, mime_headers, mime_body = self.parse_request(s.get_raw_request())
                
         self.failUnlessEqual(mime_headers['Content-Length'], str(content_length))
@@ -102,8 +103,8 @@ class HttpSessionTest(TestCase):
         status, mime_headers, mime_body = self.parse_request(s.get_raw_request())
         
         self.failUnlessEqual(mime_headers['Host'], 'localhost')
-        self.failUnlessEqual(mime_headers['user-agent'], 'Spyglass/0.1')
-        self.failUnlessEqual(mime_headers['referer'], 'http://localhost:9000/login.jsp')
+        self.failUnlessEqual(mime_headers['User-Agent'], 'Spyglass/0.1')
+        self.failUnlessEqual(mime_headers['Referer'], 'http://localhost:9000/login.jsp')
         
     def test_raw_request_with_host_headers(self):
         headers = '\r\n'.join([
@@ -117,5 +118,54 @@ class HttpSessionTest(TestCase):
         # is way easier and more accurate than comparing strings
         status, mime_headers, mime_body = self.parse_request(s.get_raw_request())
         
-        self.assertTrue('host' in mime_headers)
-        self.assertTrue(mime_headers['host'] == 'google.com')
+        self.assertTrue('Host' in mime_headers)
+        self.assertTrue(mime_headers['Host'] == 'google.com')
+
+    def test_headers_method(self):
+        headers = '\r\n'.join([
+            'User-Agent: Spyglass/0.1',
+            'User-Agent: Foobar/2.4',
+            'Referer: http://localhost:9000/login.jsp',
+            'Host: google.com',
+        ])
+        s = HttpSession(http_method='GET', http_url='http://localhost:9000/endpoint', http_headers=headers)
+        
+        expected_headers = [
+            ('User-Agent', 'Spyglass/0.1'),
+            ('User-Agent', 'Foobar/2.4'),
+            ('Referer', 'http://localhost:9000/login.jsp'),
+            ('Host', 'google.com')
+        ]
+        
+        self.failUnlessEqual(expected_headers, s.get_request_headers())
+
+    def test_header_dicts_method(self):
+        headers = '\r\n'.join([
+            'User-Agent: Spyglass/0.1',
+            'User-Agent: Foobar/2.4',
+            'Referer: http://localhost:9000/login.jsp',
+            'Host: google.com',
+        ])
+        s = HttpSession(http_method='GET', http_url='http://localhost:9000/endpoint', http_headers=headers)
+        
+        expected_headers = [
+            dict(name='User-Agent', value='Spyglass/0.1'),
+            dict(name='User-Agent', value='Foobar/2.4'),
+            dict(name='Referer', value='http://localhost:9000/login.jsp'),
+            dict(name='Host', value='google.com')
+        ]
+        
+        self.failUnlessEqual(expected_headers, s.header_list())
+
+    def test_multiple_header_values(self):
+        headers = '\r\n'.join([
+            'Cache-Control: a',
+            'Cache-Control: b',
+        ])
+        s = HttpSession(http_method='GET', http_url='http://localhost:9000/endpoint', http_headers=headers)
+        
+        request = s.get_raw_request()
+        print s.get_raw_request()
+        
+        self.failUnless('Cache-Control: a' in request)
+        self.failUnless('Cache-Control: b' in request)
