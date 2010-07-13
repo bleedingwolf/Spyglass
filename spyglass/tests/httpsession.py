@@ -56,12 +56,14 @@ class HttpSessionTest(TestCase):
         
         self.failIf(s.needs_to_send_request())
         
+
     def test_raw_request_with_querystring(self):
     
         s = HttpSession(http_method='GET', http_url='http://api.flickr.com/services/rest/?method=flickr.photos.getExif')
         expected_request = 'GET /services/rest/?method=flickr.photos.getExif HTTP/1.1\r\n' + \
             'Host: api.flickr.com\r\nAccept: */*\r\n\r\n'
         self.failUnlessEqual(s.get_raw_request(), expected_request)
+
 
     def test_raw_request_with_alternate_url(self):
     
@@ -71,6 +73,7 @@ class HttpSessionTest(TestCase):
             'Host: www.google.com\r\nAccept: */*\r\n\r\n'
         
         self.failUnlessEqual(raw_request, expected_request)
+
 
     def test_raw_request_with_body(self):
     
@@ -93,6 +96,7 @@ class HttpSessionTest(TestCase):
         self.failUnlessEqual(mime_headers['Content-Length'], str(content_length))
         self.failUnlessEqual(mime_body, body)
 
+
     def test_raw_request_with_extra_headers(self):
         headers = '\r\n'.join([
             'User-Agent: Spyglass/0.1',
@@ -105,6 +109,7 @@ class HttpSessionTest(TestCase):
         self.failUnlessEqual(mime_headers['Host'], 'localhost')
         self.failUnlessEqual(mime_headers['User-Agent'], 'Spyglass/0.1')
         self.failUnlessEqual(mime_headers['Referer'], 'http://localhost:9000/login.jsp')
+        
         
     def test_raw_request_with_host_headers(self):
         headers = '\r\n'.join([
@@ -120,6 +125,7 @@ class HttpSessionTest(TestCase):
         
         self.assertTrue('Host' in mime_headers)
         self.assertTrue(mime_headers['Host'] == 'google.com')
+
 
     def test_headers_method(self):
         headers = '\r\n'.join([
@@ -139,6 +145,7 @@ class HttpSessionTest(TestCase):
         
         self.failUnlessEqual(expected_headers, s.get_request_headers())
 
+
     def test_header_dicts_method(self):
         headers = '\r\n'.join([
             'User-Agent: Spyglass/0.1',
@@ -157,6 +164,7 @@ class HttpSessionTest(TestCase):
         
         self.failUnlessEqual(expected_headers, s.header_list())
 
+
     def test_multiple_header_values(self):
         headers = '\r\n'.join([
             'Cache-Control: a',
@@ -165,7 +173,6 @@ class HttpSessionTest(TestCase):
         s = HttpSession(http_method='GET', http_url='http://localhost:9000/endpoint', http_headers=headers)
         
         request = s.get_raw_request()
-        print s.get_raw_request()
         
         self.failUnless('Cache-Control: a' in request)
         self.failUnless('Cache-Control: b' in request)

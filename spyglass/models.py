@@ -2,7 +2,7 @@
 from django.db import models
 
 from urlparse import urlparse
-from email.parser import HeaderParser
+from email import message_from_string
 
 
 def format_request(method, hostname, path, body='', extra_headers=[]):
@@ -96,9 +96,7 @@ class HttpSession(models.Model):
         '''
         Returns a list of tuples representing the request's headers.
         '''
-        parser = HeaderParser()
-        message = parser.parsestr(self.http_headers)
-        return message.items()
+        return message_from_string(str(self.http_headers)).items()
     
     def header_list(self):
         '''
