@@ -174,7 +174,15 @@ class HttpRequestor(object):
         self.raw_response = decompressed_body
 
     def complete_response_text(self):
-        return self.status_line + self.raw_headers + self.raw_response
+        charset = self.get_charset()
+        return (self.status_line + self.raw_headers + self.raw_response).decode(charset)
+    
+    def get_charset(self):
+        charset = 'utf8'
+        content_type = self.header_value('content-type')
+        if content_type and 'charset=' in content_type:
+            charset = content_type[content_type.find('charset=')+8:]
+        return charset        
     
     def close(self):
         self.socket_file.close()

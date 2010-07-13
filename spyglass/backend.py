@@ -58,7 +58,7 @@ def make_session_request(session_id, url=None, follow_redirects=False, **kwargs)
         
         requestor.read_body()       
         requestor.close()
-                
+        
         session.http_response = requestor.complete_response_text()
         session.time_completed = datetime.datetime.now()
         session.save()
