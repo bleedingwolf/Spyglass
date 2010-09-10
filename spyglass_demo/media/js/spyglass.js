@@ -49,7 +49,14 @@ function setupAutoReloadingSessionPage() {
     var session_id = placeholder.attr('session_id');
     if(session_id === undefined) return;
     
+    placeholder.html('\n    <img src="/static/img/ajax-loader.gif"> Waiting...\n');
+    
     var url = '/sessions/' + session_id + '/is_complete.json';
+    
+    var template = '';
+    $.get('/static/mustache/session.mustache', function(data) {
+        template = data;
+    });
     
     var checkWithServer = function() {
 
@@ -64,10 +71,8 @@ function setupAutoReloadingSessionPage() {
                     error_msg.addClass('http-error');
                     $('.response.session-listing').replaceWith(error_msg);
                 } else {
-                    placeholder.replaceWith(data.pretty_response);
-                    $('.response .linenos pre code').text(data.response_linenos);
-                    $('.response .datetime').html('completed in ' + data.elapsed_milliseconds +
-                        ' <abbr title="milliseconds">ms</abbr>')
+                    var html = Mustache.to_html(template, data);
+                    $('#response-container').html(html);
                 }
             } else {
                 setTimeout(checkWithServer, 1000);

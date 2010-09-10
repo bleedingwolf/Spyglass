@@ -13,7 +13,7 @@ from spyglass.http import HttpRequestor
 
 def session_is_ready(session):
     result = AsyncResult(session.celery_task_id)
-    return result.successful() and session.time_completed
+    return (result.successful() and session.time_completed) or session.http_error
 
 
 def run_session(session):

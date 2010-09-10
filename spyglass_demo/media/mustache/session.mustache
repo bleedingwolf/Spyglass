@@ -1,0 +1,26 @@
+
+{{#redirects}}
+<p class="followed-redirect">
+    <img src="/static/img/server_go.png" alt="" />
+    redirected to {{url}}</p>
+{{/redirects}}
+
+{{^http_error}}
+<div class="response session-listing">
+    <p>Response <span class="datetime">completed in {{elapsed_milliseconds}} <abbr title="milliseconds">ms</abbr></span></p>
+    <div class="code-listing">
+    <table>
+        <tr>
+            <td class="linenos"><pre><code>{{response_linenos}}</code></pre></td>
+            <td class="data"><pre><code>{{{pretty_response}}}</code></pre></td>
+        </tr>
+    </table>
+    </div>
+</div>
+{{/http_error}}
+
+{{#http_error}}
+    <p class="http-error">
+        <img src="/static/img/exclamation.png" alt="" />
+        Error: {{http_error}}</p>
+{{/http_error}}

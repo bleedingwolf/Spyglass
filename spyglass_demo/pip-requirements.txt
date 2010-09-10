@@ -9,3 +9,4 @@ django-picklefield==0.1.6
 ghettoq==0.1.2
 importlib==1.0.2
 python-dateutil==1.5
+pystache==0.3.1

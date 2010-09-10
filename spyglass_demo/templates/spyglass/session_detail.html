@@ -40,28 +40,10 @@
     {% endwith %}
 </div>
 
-{% for redirect in session.httpredirect_set.all %}
-<p class="followed-redirect">
-    <img src="{{ MEDIA_URL}}img/server_go.png" alt="" />
-    redirected to {{ redirect.url }}</p>
-{% endfor %}
+<div id="response-container">
 
-{% if not session.http_error %}
-<div class="response session-listing">
-    <p>Response <span class="datetime">{% if elapsed_milliseconds %}completed in {{ elapsed_milliseconds }} <abbr title="milliseconds">ms</abbr>{% endif %}</span></p>
-    <div class="code-listing">
-    <table>
-        <tr>
-            <td class="linenos"><pre><code>{{ response_linenos }}</code></pre></td>
-            <td class="data"><pre><code>{{ pretty_response|safe }}</code></pre></td>
-        </tr>
-    </table>
-    </div>
-</div>
-{% else %}
-    <p class="http-error">
-        <img src="{{ MEDIA_URL}}img/exclamation.png" alt="" />
-        Error: {{ session.get_http_error_display }}</p>
-{% endif %}
+    {{ formatted_response|safe }}
+
+</div><!-- /response-container -->
 
 {% endblock content %}

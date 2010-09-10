@@ -1,12 +1,16 @@
 
 import datetime
+import os
 import django.utils.simplejson as json
+
+import pystache
 
 from django.shortcuts import render_to_response, redirect, get_object_or_404
 from django.template import RequestContext
 from django.template.defaultfilters import force_escape
 from django.template.loader import render_to_string
 from django.http import HttpResponse
+from django.conf import settings
 
 from spyglass.models import HttpSession
 from spyglass.backend import run_session, session_is_ready
@@ -87,24 +91,34 @@ def session_list(request):
     return render_to_response('spyglass/session_list.html', context, context_instance=RequestContext(request))
 
 
-def session_completed_jsonp(request, session_id):
-
-    session = get_object_or_404(HttpSession, pk=session_id)
+def _mustache_context_for_session(session):
     ready = session_is_ready(session)
-    
     html_formatter = HtmlFormatter()
-    response = {'session_id': session.id}
-    
-    response['complete'] = 'true' if ready else 'false'
+    ctx = {
+        'MEDIA_URL': settings.MEDIA_URL,
+        'session_id': session.id,
+        'complete': 'true' if ready else 'false',
+    }
     
     if ready:
         if session.http_error:
-            response['error'] = session.get_http_error_display()
+            ctx['http_error'] = session.get_http_error_display()
         else:
             pretty_response = html_formatter.format(session.http_response)
-            response['pretty_response'] = pretty_response
-            response['response_linenos'] = html_line_numbers(pretty_response)
-            response['elapsed_milliseconds'] = (session.time_completed - session.time_requested).microseconds / 1000.0
+            ctx['pretty_response'] = pretty_response
+            ctx['response_linenos'] = html_line_numbers(pretty_response)
+            ctx['elapsed_milliseconds'] = (session.time_completed - session.time_requested).microseconds / 1000.0
+            ctx['redirects'] = [{'url': s.url} for s in session.httpredirect_set.all()]
+    else:
+        ctx['response_linenos'] = '1\n2\n3'
+        ctx['pretty_response'] = '<div class="loading-placeholder" session_id="%d">Refresh the page to see results...</div>' % session.id
+    return ctx
+
+
+def session_completed_jsonp(request, session_id):
+
+    session = get_object_or_404(HttpSession, pk=session_id)
+    response = _mustache_context_for_session(session)
     
     return HttpResponse(json.dumps(response), mimetype='application/json')
 
@@ -117,26 +131,21 @@ def session_detail(request, session_id):
     run_session(session)
     
     pretty_request = html_formatter.format(session.get_raw_request())
-    
-    if session.time_completed:
-        if not session.http_error:
-            pretty_response = html_formatter.format(session.http_response)
-            session_time = session.time_completed - session.time_requested
-            elapsed_milliseconds = session_time.microseconds / 1000.0
-    else:
-        pretty_response = render_to_string('spyglass/fragment_loading_placeholder.html', {'session_id': session.id})
-        elapsed_milliseconds = None
-    
+
     use_advanced_form = (len(session.http_body) != 0) or (len(session.http_headers) != 0)
     form, http_header_form = session_and_headers_form(session=session)
-        
+
+    response_template = open(os.path.join(settings.MEDIA_ROOT, 'mustache/session.mustache')).read()
+    formatted_response = pystache.render(response_template, _mustache_context_for_session(session))
+    
     context = {
         'session': session,
         'pretty_request': pretty_request,
-        'pretty_response': pretty_response,
         'request_linenos': html_line_numbers(pretty_request),
-        'response_linenos': html_line_numbers(pretty_response),
-        'elapsed_milliseconds': elapsed_milliseconds,
+        
+        'show_placeholder': not session_is_ready(session),
+        'formatted_response': formatted_response,
+        
         'form': form,
         'http_header_form': http_header_form,
         'use_advanced_form': use_advanced_form,
