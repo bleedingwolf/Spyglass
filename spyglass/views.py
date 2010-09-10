@@ -24,6 +24,7 @@ def homepage(request):
     context = {'form': session_form, 'http_header_form': headers_form}
     return render_to_response('spyglass/create_session.html', context, context_instance=RequestContext(request))
 
+
 def create_session(request):
     
     if request.GET.get('advanced', 'no') == 'yes':
@@ -49,6 +50,9 @@ def create_session(request):
             s.save()
             if s.pk:
                 # save was successful
+                request.session.setdefault('spyglass_session_ids', set()).add(s.pk)
+                request.session.modified = True
+                
                 return redirect(s.get_absolute_url())
             else:
                 # something went wrong...
@@ -77,18 +81,36 @@ def session_resend(request, session_id):
     session.http_response = ''
     session.save()
     
+    request.session.setdefault('spyglass_session_ids', set()).add(session.pk)
+    request.session.modified = True
+    
     return redirect(session.get_absolute_url())
 
 
-def session_list(request):
-    all_sessions = HttpSession.objects.all().order_by('-time_requested')
+def session_list_generic(request, queryset):
+
     form, header_form = session_and_headers_form()
     context = {
-        'session_list': all_sessions,
+        'session_list': queryset,
         'form': form,
         'http_header_form': header_form,
     }
     return render_to_response('spyglass/session_list.html', context, context_instance=RequestContext(request))
+
+
+def session_list_mine(request):
+    
+    my_session_ids = request.session.get('spyglass_session_ids', set())
+    my_sessions = HttpSession.objects.filter(pk__in=my_session_ids).order_by('-time_requested')
+        
+    return session_list_generic(request, my_sessions)
+
+
+def session_list_all(request):
+    
+    all_sessions = HttpSession.objects.all().order_by('-time_requested')
+    
+    return session_list_generic(request, all_sessions)
 
 
 def _mustache_context_for_session(session):

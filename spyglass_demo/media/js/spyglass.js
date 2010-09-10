@@ -5,6 +5,7 @@ $(document).ready( function() {
     setupHttpSessionForm();
     setupPageFadeIn();
     setupAutoReloadingSessionPage();
+    highlightSessionListFilter();
 });
 
 function setupHttpSessionForm() {
@@ -81,6 +82,14 @@ function setupAutoReloadingSessionPage() {
     }
     
     setTimeout(checkWithServer, 1000);
+}
+
+function highlightSessionListFilter() {
+    if(window.location.pathname === '/sessions/mine') {
+        $('#my-requests-link').addClass('active');
+    } else {
+        $('#all-requests-link').addClass('active');
+    }
 }
 
 function setSelectionRange(textElem, selectionStart, selectionEnd) {

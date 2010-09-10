@@ -5,6 +5,11 @@
 
 {% block content %}
 <div class="centered-content">
+
+    <p id="session-filter-control">
+       <a id="my-requests-link" href="{% url spyglass.views.session_list_mine %}">my requests</a> 
+       <a id="all-requests-link" href="{% url spyglass.views.session_list_all %}">all requests</a></p>
+
     {% for session in session_list %}
         
         {% ifchanged session.time_requested.day %}
@@ -19,4 +24,5 @@
     <p>Oops, you haven't made any requests yet!</p>
     {% endfor %}
 </div>
+
 {% endblock content %}

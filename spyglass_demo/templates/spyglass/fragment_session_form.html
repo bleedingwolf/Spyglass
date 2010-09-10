@@ -17,7 +17,7 @@
     <a href="{% url spyglass.views.create_session %}" class="advanced-form-toggle">Basic Options</a>
     {% endif %}
 
-    <a href="{% url spyglass.views.session_list %}" class="recent-requests-link">Recent Requests</a>
+    <a href="{% url session_list %}" class="recent-requests-link">Recent Requests</a>
     
     <div class="advanced-options"{% if not use_advanced_form %} style="display: none;"{% endif %}>
         <label>Extra Headers</label>
