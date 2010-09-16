@@ -3,6 +3,13 @@
 {% block title %}{{ block.super }} - {{ session }}{% endblock %}
 
 {% block content %}
+
+{% if session.autocorrected_localhost %}
+    <p class="autocorrected-localhost">
+    <img src="/static/img/information.png" alt="" />
+    The hostname <strong><code>localhost</code></strong> was automatically corrected.</p>
+{% endif %}
+
 <div class="request session-listing">
     <p>{% if session.is_https %}<img src="{{ MEDIA_URL }}img/lock.png" alt="" />{% endif %}
         Request <span class="datetime"> for {{ session.http_url }} sent {{ session.time_requested }}</span>

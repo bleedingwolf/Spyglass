@@ -2,6 +2,7 @@
 import datetime
 import os
 import django.utils.simplejson as json
+import socket
 
 import pystache
 
@@ -16,6 +17,7 @@ from spyglass.models import HttpSession
 from spyglass.backend import run_session, session_is_ready
 from spyglass.formatters import HtmlFormatter, html_line_numbers
 from spyglass.forms import session_and_headers_form
+from spyglass.viewhelpers import replace_localhost_hostname, mustache_context_for_session
 
 
 def homepage(request):
@@ -38,15 +40,20 @@ def create_session(request):
         
         if f.is_valid():
         
+            # did the user accidentally use the hostname 'localhost'?
+            real_hostname = socket.gethostbyaddr(request.META['REMOTE_ADDR'])[0]
+            real_url, corrected = replace_localhost_hostname(f.cleaned_data['url'], real_hostname)
+        
             header_text = ''
             if header_formset.is_valid():
                 header_text = '\r\n'.join([x.formatted_header() for x in header_formset.forms if x.formatted_header()])
                 
             s = HttpSession(http_method=f.cleaned_data['method'],
-                http_url=f.cleaned_data['url'],
+                http_url=real_url,
                 http_headers=header_text,
                 follow_redirects=f.cleaned_data['follow_redirects'],
-                http_body=f.cleaned_data['body'])
+                http_body=f.cleaned_data['body'],
+                autocorrected_localhost=corrected)
             s.save()
             if s.pk:
                 # save was successful
@@ -113,34 +120,10 @@ def session_list_all(request):
     return session_list_generic(request, all_sessions)
 
 
-def _mustache_context_for_session(session):
-    ready = session_is_ready(session)
-    html_formatter = HtmlFormatter()
-    ctx = {
-        'MEDIA_URL': settings.MEDIA_URL,
-        'session_id': session.id,
-        'complete': 'true' if ready else 'false',
-    }
-    
-    if ready:
-        if session.http_error:
-            ctx['http_error'] = session.get_http_error_display()
-        else:
-            pretty_response = html_formatter.format(session.http_response)
-            ctx['pretty_response'] = pretty_response
-            ctx['response_linenos'] = html_line_numbers(pretty_response)
-            ctx['elapsed_milliseconds'] = (session.time_completed - session.time_requested).microseconds / 1000.0
-            ctx['redirects'] = [{'url': s.url} for s in session.httpredirect_set.all()]
-    else:
-        ctx['response_linenos'] = '1\n2\n3'
-        ctx['pretty_response'] = '<div class="loading-placeholder" session_id="%d">Refresh the page to see results...</div>' % session.id
-    return ctx
-
-
 def session_completed_jsonp(request, session_id):
 
     session = get_object_or_404(HttpSession, pk=session_id)
-    response = _mustache_context_for_session(session)
+    response = mustache_context_for_session(session)
     
     return HttpResponse(json.dumps(response), mimetype='application/json')
 
@@ -158,7 +141,7 @@ def session_detail(request, session_id):
     form, http_header_form = session_and_headers_form(session=session)
 
     response_template = open(os.path.join(settings.MEDIA_ROOT, 'mustache/session.mustache')).read()
-    formatted_response = pystache.render(response_template, _mustache_context_for_session(session))
+    formatted_response = pystache.render(response_template, mustache_context_for_session(session))
     
     context = {
         'session': session,

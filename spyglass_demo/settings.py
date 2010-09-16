@@ -106,6 +106,7 @@ INSTALLED_APPS = (
 
     'django.contrib.admin',
     
+    'south',
     'ghettoq',
     'celery',
     'spyglass',
