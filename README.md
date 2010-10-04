@@ -6,7 +6,7 @@ A simple webapp for logging and sharing HTTP requests.
   * Clone the repository.
   * cd SpyGlass/spyglass_demo
   * sudo pip install -r pip-requirements.txt
-  * python ./manage.py syncdb
+  * python ./manage.py syncdb --all
 
 ## Usage
 
