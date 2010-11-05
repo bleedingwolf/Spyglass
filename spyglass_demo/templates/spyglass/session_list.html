@@ -10,6 +10,9 @@
        <a id="my-requests-link" href="{% url spyglass.views.session_list_mine %}">my requests</a> 
        <a id="all-requests-link" href="{% url spyglass.views.session_list_all %}">all requests</a></p>
 
+    {% include "spyglass/fragment_pagination.html" %}
+    <div class="clear"></div>
+
     {% for session in session_list %}
         
         {% ifchanged session.time_requested.day %}
@@ -23,6 +26,9 @@
     {% empty %}
     <p>Oops, you haven't made any requests yet!</p>
     {% endfor %}
+    
+    {% include "spyglass/fragment_pagination.html" %}
+
 </div>
 
 {% endblock content %}

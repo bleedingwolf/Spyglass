@@ -409,6 +409,40 @@ body.create-session-page {
     }
 }
 
+p.pagination {
+    margin-top: 2em;
+    padding-bottom: 4em;
+    
+    a {
+        text-decoration: none;
+        font-size: 13px;
+        font-weight: bold;
+        display: block;
+        float: left;
+        border-bottom: 2px solid #ddd;
+        padding: 3px 0;
+        color: #777;
+        
+        span {
+            padding: 5px 6px;
+        }
+    }
+    
+    a.disabled {
+        color: #ddd;
+    }
+    
+    a.active {
+        border-bottom: 2px solid #777;
+        
+        span {
+            padding: 5px 4px;
+            border-left: 2px solid white;
+            border-right: 2px solid white;
+        }
+    }
+}
+
 /* Fonts */
 
 @code-font: Monaco, 'Courier New', 'DejaVu Sans Mono', 'Bitstream Vera Sans Mono', monospace;

@@ -12,6 +12,7 @@ from django.template.defaultfilters import force_escape
 from django.template.loader import render_to_string
 from django.http import HttpResponse
 from django.conf import settings
+from django.views.generic import list_detail
 
 from spyglass.models import HttpSession
 from spyglass.backend import run_session, session_is_ready
@@ -97,12 +98,18 @@ def session_resend(request, session_id):
 def session_list_generic(request, queryset):
 
     form, header_form = session_and_headers_form()
-    context = {
-        'session_list': queryset,
-        'form': form,
-        'http_header_form': header_form,
-    }
-    return render_to_response('spyglass/session_list.html', context, context_instance=RequestContext(request))
+
+    return list_detail.object_list(
+        request,
+        queryset = queryset,
+        paginate_by = 2,
+        template_name = 'spyglass/session_list.html',
+        template_object_name = 'session',
+        extra_context = dict(
+            form = form,
+            http_header_form = header_form
+        )
+    )
 
 
 def session_list_mine(request):
