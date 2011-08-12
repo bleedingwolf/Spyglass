@@ -102,7 +102,7 @@ def session_list_generic(request, queryset):
     return list_detail.object_list(
         request,
         queryset = queryset,
-        paginate_by = 2,
+        paginate_by = 20,
         template_name = 'spyglass/session_list.html',
         template_object_name = 'session',
         extra_context = dict(
