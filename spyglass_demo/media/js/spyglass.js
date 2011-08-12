@@ -20,16 +20,13 @@ function setupHttpSessionForm() {
     $('.advanced-options .add-extra-header-link').click( function(e) {
         e.preventDefault();
         
-        var current_form_count = $('#id_header-TOTAL_FORMS').val();
-        current_form_count++;
+        var current_form_count = parseInt($('#id_header-TOTAL_FORMS').val(), 10);
+        $('#id_header-TOTAL_FORMS').val(current_form_count + 1);
     
         const TEMPLATE = '<tr><td><input type="text" name="header-__prefix__-name" id="id_header-__prefix__-name" /></td><td><input type="text" name="header-__prefix__-value" id="id_header-__prefix__-value" /></td></tr>';
         var row_html = TEMPLATE.replace(/__prefix__/g, current_form_count);
         
-        $('#id_header-TOTAL_FORMS').val(current_form_count);
-        
         var table = $('table.extra-headers');
-        console.log(table);
         table.append(row_html);
     })
     
