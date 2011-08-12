@@ -1,5 +1,5 @@
 
-from urlparse import urlparse
+from urlparse import urlparse, urlunparse
 import socket
 import ssl
 
@@ -110,6 +110,13 @@ class HttpRequestor(object):
     def is_redirect_to_location(self):
         is_redirect = bool(300 <= self.response_code <= 399)
         location = self.header_value('location')
+        parsed_location = urlparse(location)
+        
+        if not parsed_location.netloc:
+            # relative redirect
+            parsed_url = urlparse(self.url)
+            location = urlunparse((parsed_url.scheme, parsed_url.netloc, location, None, None, None))
+            
         return is_redirect, location
     
     def read_body(self):

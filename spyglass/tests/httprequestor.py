@@ -72,6 +72,17 @@ class HttpRequestorTest(TestCase):
         self.assertTrue(is_redirect)
         self.failUnlessEqual(location, 'http://news.ycombinator.com/')
 
+    def test_parsing_relative_redirect_response(self):
+        sock = MockSocket(response_data='HTTP/1.0 307 Temporary Redirect\r\nServer: nginx\r\nDate: Sat, 26 Jun 2010 04:03:37 GMT\r\nLocation: /destination/\r\n\r\n')
+
+        self.requestor.start_request(sock)
+        self.requestor.read_response_headers()
+        
+        is_redirect, location = self.requestor.is_redirect_to_location()
+        
+        self.assertTrue(is_redirect)
+        self.failUnlessEqual(location, 'http://localhost:7010/destination/')
+
     def test_reading_response_with_content_length(self):
         sock = MockSocket(response_data='HTTP/1.0 200 OK\r\nServer: nginx\r\nDate: Sat, 26 Jun 2010 04:03:37 GMT\r\nContent-length: 4\r\n\r\nGoodBad')
 
