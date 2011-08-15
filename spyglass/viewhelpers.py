@@ -29,22 +29,3 @@ def mustache_context_for_session(session):
         ctx['response_linenos'] = '1\n2\n3'
         ctx['pretty_response'] = '<div class="loading-placeholder" session_id="%d">Refresh the page to see results...</div>' % session.id
     return ctx
-
-
-def replace_localhost_hostname(url, real_hostname):
-    parsed_url = urlparse.urlparse(url)
-    
-    if parsed_url.hostname == 'localhost':
-
-        if parsed_url.port:
-            real_netloc = '%s:%d' % (real_hostname, parsed_url.port)
-        else:
-            real_netloc = real_hostname
-            
-        parts = list(parsed_url)
-        parts[1] = real_netloc
-        real_url = urlparse.urlunparse(parts)
-
-        return real_url, True
-    else:
-        return url, False

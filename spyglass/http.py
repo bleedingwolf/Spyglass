@@ -109,7 +109,8 @@ class HttpRequestor(object):
         
     def is_redirect_to_location(self):
         is_redirect = bool(300 <= self.response_code <= 399)
-        location = self.header_value('location')
+
+        location = self.header_value('location') or ''
         parsed_location = urlparse(location)
         
         if not parsed_location.netloc:

@@ -130,3 +130,12 @@ class HttpRedirect(models.Model):
     
     class Meta:
         verbose_name = 'HTTP redirect'
+
+
+class Plugin(models.Model):
+
+    name = models.CharField(max_length=200)
+    class_name = models.CharField(max_length=500)
+
+    def __unicode__(self):
+        return self.name

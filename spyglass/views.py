@@ -2,7 +2,7 @@
 import datetime
 import os
 import django.utils.simplejson as json
-import socket
+from importlib import import_module
 
 import pystache
 
@@ -14,11 +14,11 @@ from django.http import HttpResponse
 from django.conf import settings
 from django.views.generic import list_detail
 
-from spyglass.models import HttpSession
+from spyglass.models import HttpSession, Plugin
 from spyglass.backend import run_session, session_is_ready
 from spyglass.formatters import HtmlFormatter, html_line_numbers
 from spyglass.forms import session_and_headers_form
-from spyglass.viewhelpers import replace_localhost_hostname, mustache_context_for_session
+from spyglass.viewhelpers import mustache_context_for_session
 
 
 def homepage(request):
@@ -40,21 +40,32 @@ def create_session(request):
         f, header_formset = session_and_headers_form(request.POST)
         
         if f.is_valid():
-        
-            # did the user accidentally use the hostname 'localhost'?
-            real_hostname = socket.gethostbyaddr(request.META['REMOTE_ADDR'])[0]
-            real_url, corrected = replace_localhost_hostname(f.cleaned_data['url'], real_hostname)
-        
+
             header_text = ''
             if header_formset.is_valid():
                 header_text = '\r\n'.join([x.formatted_header() for x in header_formset.forms if x.formatted_header()])
                 
             s = HttpSession(http_method=f.cleaned_data['method'],
-                http_url=real_url,
+                http_url=f.cleaned_data['url'],
                 http_headers=header_text,
                 follow_redirects=f.cleaned_data['follow_redirects'],
                 http_body=f.cleaned_data['body'],
-                autocorrected_localhost=corrected)
+                autocorrected_localhost=False)
+
+                    
+            # apply plugins
+            all_plugins = Plugin.objects.all()
+            for plugin in all_plugins:
+                full_klazz_name = plugin.class_name
+                try:
+                    module_name, klazz_name = full_klazz_name.rsplit('.', 1)
+                    module = import_module(module_name)
+                    klazz = getattr(module, klazz_name)
+                    obj = klazz()
+                    obj.pre_process_session(request, s)
+                except Exception as inst:
+                    print inst
+
             s.save()
             if s.pk:
                 # save was successful
