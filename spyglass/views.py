@@ -42,12 +42,10 @@ def plugin_forms(request=None):
                     form = form_klazz(prefix='plugin-%d' % plugin.id)
                 
                 form.plugin = plugin
-                
+
                 forms.append(form)
         except Exception as ex:
             print 'Error: %s' % ex
-    
-    print forms
 
     return forms
 
@@ -101,7 +99,7 @@ def create_session(request):
                         form = form_klazz(request.POST, prefix='plugin-%d' % plugin.id)
                         kwargs['form'] = form
 
-                    was_applied = obj.pre_process_session(request, s, **kwargs)
+                    was_applied = obj.dispatch(request, s, **kwargs)
 
                     if was_applied:
                         applied_plugins.append(plugin)

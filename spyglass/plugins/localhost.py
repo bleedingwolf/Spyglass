@@ -2,6 +2,8 @@
 import urlparse
 import socket
 
+from spyglass.plugins.base import SpyglassPlugin
+
 
 def replace_localhost_hostname(url, real_hostname):
     parsed_url = urlparse.urlparse(url)
@@ -22,7 +24,7 @@ def replace_localhost_hostname(url, real_hostname):
         return url, False
 
 
-class LocalhostPlugin(object):
+class LocalhostPlugin(SpyglassPlugin):
 
     def pre_process_session(self, django_request, spyglass_session):
                     
