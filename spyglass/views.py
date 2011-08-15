@@ -27,25 +27,20 @@ def plugin_forms(request=None):
 
     all_plugins = Plugin.objects.all()
     for plugin in all_plugins:
-        full_klazz_name = plugin.class_name
-        try:
-            module_name, klazz_name = full_klazz_name.rsplit('.', 1)
-            module = import_module(module_name)
-            klazz = getattr(module, klazz_name)
-            obj = klazz()
 
-            if hasattr(obj, 'plugin_form'):
-                form_klazz = obj.plugin_form()
-                if request and request.method == 'POST':
-                    form = form_klazz(request.POST, prefix='plugin-%d' % plugin.id)
-                else:
-                    form = form_klazz(prefix='plugin-%d' % plugin.id)
-                
-                form.plugin = plugin
+        obj = plugin.get_instance()
 
-                forms.append(form)
-        except Exception as ex:
-            print 'Error: %s' % ex
+        if not obj:
+            continue
+
+        form = obj.get_form_instance(request)
+
+        if not form:
+            continue
+
+        form.plugin = plugin
+
+        forms.append(form)
 
     return forms
 
@@ -86,26 +81,23 @@ def create_session(request):
             applied_plugins = []
 
             for plugin in all_plugins:
-                full_klazz_name = plugin.class_name
-                try:
-                    module_name, klazz_name = full_klazz_name.rsplit('.', 1)
-                    module = import_module(module_name)
-                    klazz = getattr(module, klazz_name)
-                    obj = klazz()
 
-                    kwargs = {}
-                    if hasattr(obj, 'plugin_form'):
-                        form_klazz = obj.plugin_form()
-                        form = form_klazz(request.POST, prefix='plugin-%d' % plugin.id)
-                        kwargs['form'] = form
+                obj = plugin.get_instance()
 
-                    was_applied = obj.dispatch(request, s, **kwargs)
+                if not obj:
+                    continue
 
-                    if was_applied:
-                        applied_plugins.append(plugin)
+                kwargs = {}
 
-                except Exception as inst:
-                    print inst
+                form = obj.get_form_instance(request)
+
+                if form:
+                    kwargs['form'] = form
+
+                was_applied = obj.dispatch(request, s, **kwargs)
+
+                if was_applied:
+                    applied_plugins.append(plugin)
 
             s.save()
             s.applied_plugins = applied_plugins

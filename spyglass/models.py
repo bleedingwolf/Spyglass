@@ -3,6 +3,7 @@ from django.db import models
 
 from urlparse import urlparse, parse_qsl
 from email import message_from_string
+from importlib import import_module
 
 
 def format_request(method, hostname, path, body='', extra_headers=[]):
@@ -138,3 +139,14 @@ class Plugin(models.Model):
 
     def __unicode__(self):
         return self.name
+    
+    def get_instance(self):
+        try:
+            module_name, klazz_name = self.class_name.rsplit('.', 1)
+            module = import_module(module_name)
+            klazz = getattr(module, klazz_name)
+            obj = klazz()
+            obj.plugin_id = self.id
+            return obj
+        except Exception as ex:
+            return None
