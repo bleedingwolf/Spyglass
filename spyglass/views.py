@@ -49,12 +49,12 @@ def create_session(request):
                 http_url=f.cleaned_data['url'],
                 http_headers=header_text,
                 follow_redirects=f.cleaned_data['follow_redirects'],
-                http_body=f.cleaned_data['body'],
-                autocorrected_localhost=False)
+                http_body=f.cleaned_data['body'])
 
                     
             # apply plugins
             all_plugins = Plugin.objects.all()
+            applied_plugins = []
             for plugin in all_plugins:
                 full_klazz_name = plugin.class_name
                 try:
@@ -62,11 +62,18 @@ def create_session(request):
                     module = import_module(module_name)
                     klazz = getattr(module, klazz_name)
                     obj = klazz()
-                    obj.pre_process_session(request, s)
+
+                    was_applied = obj.pre_process_session(request, s)
+
+                    if was_applied:
+                        applied_plugins.append(plugin)
+
                 except Exception as inst:
                     print inst
 
             s.save()
+            s.applied_plugins = applied_plugins
+            
             if s.pk:
                 # save was successful
                 request.session.setdefault('spyglass_session_ids', set()).add(s.pk)

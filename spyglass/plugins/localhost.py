@@ -3,7 +3,6 @@ import urlparse
 import socket
 
 
-
 def replace_localhost_hostname(url, real_hostname):
     parsed_url = urlparse.urlparse(url)
     
@@ -23,7 +22,6 @@ def replace_localhost_hostname(url, real_hostname):
         return url, False
 
 
-
 class LocalhostPlugin(object):
 
     def pre_process_session(self, django_request, spyglass_session):
@@ -35,4 +33,6 @@ class LocalhostPlugin(object):
         if corrected:
             spyglass_session.http_url = real_url
             spyglass_session.autocorrected_localhost = True
+        
+        return corrected
             

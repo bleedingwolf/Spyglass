@@ -4,11 +4,11 @@
 
 {% block content %}
 
-{% if session.autocorrected_localhost %}
+{% for applied_plugin in  session.applied_plugins.all %}
     <p class="autocorrected-localhost">
     <img src="/static/img/information.png" alt="" />
-    The hostname <strong><code>localhost</code></strong> was automatically corrected.</p>
-{% endif %}
+    The plugin <strong>{{ applied_plugin.name }}</strong> was applied.</p>
+{% endfor %}
 
 <div class="request session-listing">
     <p>{% if session.is_https %}<img src="{{ MEDIA_URL }}img/lock.png" alt="" />{% endif %}

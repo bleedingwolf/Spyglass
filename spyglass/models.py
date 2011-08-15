@@ -62,9 +62,8 @@ class HttpSession(models.Model):
     http_headers = models.TextField('HTTP headers', blank=True)
     http_body = models.TextField('HTTP body', blank=True)
     follow_redirects = models.BooleanField(default=True)
-    
-    autocorrected_localhost = models.BooleanField(default=False,
-        help_text="Did we have to replace 'localhost' with the user's machine name?")
+
+    applied_plugins = models.ManyToManyField('Plugin')
     
     http_error = models.PositiveIntegerField('HTTP error', default=0, choices=HTTP_ERROR_CHOICES)
     http_response = models.TextField('HTTP response', blank=True)
