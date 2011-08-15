@@ -1,0 +1,10 @@
+[
+  {
+    "pk": 1,
+    "model": "spyglass.plugin",
+    "fields": {
+      "class_name": "spyglass.plugins.localhost.LocalhostPlugin",
+      "name": "Fix Localhost"
+    }
+  }
+]
