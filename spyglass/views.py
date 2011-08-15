@@ -21,10 +21,41 @@ from spyglass.forms import session_and_headers_form
 from spyglass.viewhelpers import mustache_context_for_session
 
 
+def plugin_forms(request=None):
+    
+    forms = []
+
+    all_plugins = Plugin.objects.all()
+    for plugin in all_plugins:
+        full_klazz_name = plugin.class_name
+        try:
+            module_name, klazz_name = full_klazz_name.rsplit('.', 1)
+            module = import_module(module_name)
+            klazz = getattr(module, klazz_name)
+            obj = klazz()
+
+            if hasattr(obj, 'plugin_form'):
+                form_klazz = obj.plugin_form()
+                if request and request.method == 'POST':
+                    form = form_klazz(request.POST, prefix='plugin-%d' % plugin.id)
+                else:
+                    form = form_klazz(prefix='plugin-%d' % plugin.id)
+                
+                form.plugin = plugin
+                
+                forms.append(form)
+        except Exception as ex:
+            print 'Error: %s' % ex
+    
+    print forms
+
+    return forms
+
+
 def homepage(request):
 
     session_form, headers_form = session_and_headers_form()
-    context = {'form': session_form, 'http_header_form': headers_form}
+    context = {'form': session_form, 'http_header_form': headers_form, 'plugin_forms': plugin_forms(request) }
     return render_to_response('spyglass/create_session.html', context, context_instance=RequestContext(request))
 
 
@@ -55,6 +86,7 @@ def create_session(request):
             # apply plugins
             all_plugins = Plugin.objects.all()
             applied_plugins = []
+
             for plugin in all_plugins:
                 full_klazz_name = plugin.class_name
                 try:
@@ -63,7 +95,13 @@ def create_session(request):
                     klazz = getattr(module, klazz_name)
                     obj = klazz()
 
-                    was_applied = obj.pre_process_session(request, s)
+                    kwargs = {}
+                    if hasattr(obj, 'plugin_form'):
+                        form_klazz = obj.plugin_form()
+                        form = form_klazz(request.POST, prefix='plugin-%d' % plugin.id)
+                        kwargs['form'] = form
+
+                    was_applied = obj.pre_process_session(request, s, **kwargs)
 
                     if was_applied:
                         applied_plugins.append(plugin)
@@ -179,6 +217,7 @@ def session_detail(request, session_id):
         'form': form,
         'http_header_form': http_header_form,
         'use_advanced_form': use_advanced_form,
+        'plugin_forms': plugin_forms(request),
     }
     
     return render_to_response('spyglass/session_detail.html', context, context_instance=RequestContext(request))    

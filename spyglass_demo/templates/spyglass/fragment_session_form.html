@@ -20,9 +20,10 @@
     <a href="{% url session_list %}" class="recent-requests-link">Recent Requests</a>
     
     <div class="advanced-options"{% if not use_advanced_form %} style="display: none;"{% endif %}>
+
         <label>Extra Headers</label>
         {{ http_header_form.management_form }}
-        
+
         <table class='extra-headers'>
         {% for form in http_header_form.forms %}
         <tr>
@@ -32,5 +33,22 @@
         </table>
         
         <label for="id_body">Request Body</label> {{ form.body }}
+
+        <label>Plugins</label>
+        {% for plugin_form in plugin_forms %}
+        <fieldset class="plugin-form">
+            <h4>{{ plugin_form.plugin.name }}</h4>
+            <table>
+            {% for field in plugin_form %}
+            <tr>
+              <td>{{ field.label_tag }}</td>
+              <td>{{ field }}</td>
+            </tr>
+            {% endfor %}
+            </table>
+        </fieldset>
+        {% endfor %}
+
+
     </div>
 </div>
